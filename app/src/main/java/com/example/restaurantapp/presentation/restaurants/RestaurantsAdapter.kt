@@ -1,10 +1,10 @@
-package com.example.restaurantapp.adapters
+package com.example.restaurantapp.presentation.restaurants
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.restaurantapp.data.models.Restaurant
 import com.example.restaurantapp.databinding.ItemRestaurantBinding
+import com.example.restaurantapp.domain.model.Restaurant
 
 class RestaurantsAdapter(
     private val restaurants: List<Restaurant>,

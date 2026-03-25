@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/restaurantsFragment"
-        android:name="com.example.restaurantapp.fragments.RestaurantsFragment"
+        android:name="com.example.restaurantapp.presentation.restaurants.RestaurantsFragment"
         android:label="fragment_restaurants"
         tools:layout="@layout/fragment_restaurants" >
         <action
@@ -17,17 +17,17 @@
 
     <fragment
         android:id="@+id/newsFragment"
-        android:name="com.example.restaurantapp.fragments.NewsFragment"
+        android:name="com.example.restaurantapp.presentation.news.NewsFragment"
         android:label="fragment_news"
         tools:layout="@layout/fragment_news" />
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.example.restaurantapp.fragments.ProfileFragment"
+        android:name="com.example.restaurantapp.presentation.profile.ProfileFragment"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
     <fragment
         android:id="@+id/restaurantDetailFragment"
-        android:name="com.example.restaurantapp.fragments.RestaurantDetailFragment"
+        android:name="com.example.restaurantapp.presentation.details.RestaurantDetailFragment"
         android:label="fragment_restaurant_detail"
         tools:layout="@layout/fragment_restaurant_detail" />
 </navigation>

@@ -1,7 +1,7 @@
 package com.example.restaurantapp.data.repository
 
 import com.example.restaurantapp.data.mock.MockData
-import com.example.restaurantapp.data.models.Restaurant
+import com.example.restaurantapp.domain.model.Restaurant
 
 class RestaurantRepository {
     fun getRestaurants(): List<Restaurant> {

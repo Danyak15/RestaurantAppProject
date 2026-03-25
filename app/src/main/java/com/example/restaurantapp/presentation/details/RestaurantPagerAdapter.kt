@@ -1,12 +1,11 @@
-package com.example.restaurantapp.adapters
+package com.example.restaurantapp.presentation.details
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.example.restaurantapp.MainActivity
-import com.example.restaurantapp.fragments.BookFragment
-import com.example.restaurantapp.fragments.InfoFragment
-import com.example.restaurantapp.fragments.MenuFragment
+import com.example.restaurantapp.presentation.booking.BookFragment
+import com.example.restaurantapp.presentation.info.InfoFragment
+import com.example.restaurantapp.presentation.menu.MenuFragment
 
 class RestaurantPagerAdapter(fragmentActivity: FragmentActivity)
     : FragmentStateAdapter(fragmentActivity) {
