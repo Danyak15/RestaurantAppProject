@@ -6,7 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.restaurantapp.R
+import com.example.restaurantapp.adapters.RestaurantsAdapter
+import com.example.restaurantapp.data.mock.MockData
 import com.example.restaurantapp.databinding.FragmentRestaurantsBinding
 
 
@@ -24,8 +27,11 @@ class RestaurantsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.button.setOnClickListener {
+        val mockRestaurants = MockData.getRestaurants()
+        binding.recyclerViewRestaurants.layoutManager = LinearLayoutManager(context)
+        val adapter = RestaurantsAdapter(mockRestaurants) {
             findNavController().navigate(R.id.action_restaurantsFragment_to_restaurantDetailFragment)
         }
+        binding.recyclerViewRestaurants.adapter = adapter
     }
 }
