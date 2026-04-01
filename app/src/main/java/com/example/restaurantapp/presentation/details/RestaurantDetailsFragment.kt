@@ -5,24 +5,27 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.restaurantapp.databinding.FragmentRestaurantDetailBinding
+import androidx.navigation.fragment.navArgs
+import com.example.restaurantapp.databinding.FragmentRestaurantDetailsBinding
 import com.google.android.material.tabs.TabLayoutMediator
 
-class RestaurantDetailFragment : Fragment() {
-    private lateinit var binding: FragmentRestaurantDetailBinding
+class RestaurantDetailsFragment : Fragment() {
+    private lateinit var binding: FragmentRestaurantDetailsBinding
+    private val args: RestaurantDetailsFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentRestaurantDetailBinding.inflate(inflater, container, false)
+        binding = FragmentRestaurantDetailsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.viewPager.adapter = RestaurantPagerAdapter(requireActivity())
+        val restaurantId = args.restaurantId
+        binding.viewPager.adapter = RestaurantPagerAdapter(requireActivity(), restaurantId)
 
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = when (position) {
