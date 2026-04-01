@@ -40,7 +40,11 @@
         android:id="@+id/menuCategoriesFragment"
         android:name="com.example.restaurantapp.presentation.menu.MenuCategoriesFragment"
         android:label="fragment_menu_categories"
-        tools:layout="@layout/fragment_menu_categories" />
+        tools:layout="@layout/fragment_menu_categories" >
+        <action
+            android:id="@+id/action_menuCategoriesFragment_to_menuItemsFragment"
+            app:destination="@id/menuItemsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/bookFragment"
         android:name="com.example.restaurantapp.presentation.booking.BookFragment"
@@ -51,6 +55,16 @@
         android:name="com.example.restaurantapp.presentation.info.InfoFragment"
         android:label="fragment_info"
         tools:layout="@layout/fragment_info" />
+    <fragment
+        android:id="@+id/menuItemsFragment"
+        android:name="com.example.restaurantapp.presentation.menu.MenuItemsFragment"
+        android:label="fragment_menu_items"
+        tools:layout="@layout/fragment_menu_items">
+
+        <argument
+            android:name="categoryId"
+            app:argType="integer" />
+    </fragment>
 
 
 </navigation>
