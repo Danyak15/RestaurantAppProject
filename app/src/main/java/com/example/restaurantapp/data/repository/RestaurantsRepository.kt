@@ -1,14 +1,14 @@
 package com.example.restaurantapp.data.repository
 
-import com.example.restaurantapp.data.mock.MockData
+import com.example.restaurantapp.data.mock.MockRestaurants
 import com.example.restaurantapp.domain.model.Restaurant
 
-class RestaurantRepository {
+class RestaurantsRepository {
     fun getRestaurants(): List<Restaurant> {
-        return MockData.getRestaurants()
+        return MockRestaurants.getRestaurants()
     }
 
     fun getRestaurantById(id: Int): Restaurant? {
-        return MockData.getRestaurantById(id)
+        return MockRestaurants.getRestaurantById(id)
     }
 }

@@ -2,14 +2,15 @@ package com.example.restaurantapp.presentation.restaurants
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.restaurantapp.databinding.ItemRestaurantBinding
 import com.example.restaurantapp.domain.model.Restaurant
 
 class RestaurantsAdapter(
-    private val restaurants: List<Restaurant>,
     private val onItemClick: (Restaurant) -> Unit
-) : RecyclerView.Adapter<RestaurantsAdapter.RestaurantViewHolder>() {
+) : ListAdapter<Restaurant, RestaurantsAdapter.RestaurantViewHolder>(RestaurantsDiffCallback()) {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -26,10 +27,8 @@ class RestaurantsAdapter(
         holder: RestaurantViewHolder,
         position: Int
     ) {
-        holder.bind(restaurants[position])
+        holder.bind(getItem(position))
     }
-
-    override fun getItemCount(): Int = restaurants.size
 
     class RestaurantViewHolder(
         private val binding: ItemRestaurantBinding,
@@ -43,5 +42,22 @@ class RestaurantsAdapter(
                 onItemClick(restaurant)
             }
         }
+    }
+
+    class RestaurantsDiffCallback : DiffUtil.ItemCallback<Restaurant>() {
+        override fun areItemsTheSame(
+            oldItem: Restaurant,
+            newItem: Restaurant
+        ): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(
+            oldItem: Restaurant,
+            newItem: Restaurant
+        ): Boolean {
+            return oldItem == newItem
+        }
+
     }
 }

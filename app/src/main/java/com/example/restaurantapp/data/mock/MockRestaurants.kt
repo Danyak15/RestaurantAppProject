@@ -2,7 +2,7 @@ package com.example.restaurantapp.data.mock
 
 import com.example.restaurantapp.domain.model.Restaurant
 
-object MockData {
+object MockRestaurants {
 
     fun getRestaurants(): List<Restaurant> = listOf(
         Restaurant(

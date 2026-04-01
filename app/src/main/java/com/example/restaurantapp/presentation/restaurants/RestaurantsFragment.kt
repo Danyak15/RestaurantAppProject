@@ -5,15 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.restaurantapp.R
-import com.example.restaurantapp.presentation.restaurants.RestaurantsAdapter
-import com.example.restaurantapp.data.mock.MockData
+import com.example.restaurantapp.data.repository.RestaurantsRepository
 import com.example.restaurantapp.databinding.FragmentRestaurantsBinding
 
 class RestaurantsFragment : Fragment() {
     private lateinit var binding: FragmentRestaurantsBinding
+    private val viewModel: RestaurantsViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,11 +27,17 @@ class RestaurantsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val mockRestaurants = MockData.getRestaurants()
-        binding.recyclerViewRestaurants.layoutManager = LinearLayoutManager(context)
-        val adapter = RestaurantsAdapter(mockRestaurants) {
-            findNavController().navigate(R.id.action_restaurantsFragment_to_restaurantDetailFragment)
+        val adapter = RestaurantsAdapter { restaurant ->
+            val action = RestaurantsFragmentDirections
+                .actionRestaurantsFragmentToRestaurantDetailFragment(restaurant.id)
+            findNavController().navigate(action)
         }
+
         binding.recyclerViewRestaurants.adapter = adapter
+        binding.recyclerViewRestaurants.layoutManager = LinearLayoutManager(context)
+
+        viewModel.restaurants.observe(viewLifecycleOwner) { restaurants ->
+            adapter.submitList(restaurants)
+        }
     }
 }
