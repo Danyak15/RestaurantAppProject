@@ -2,11 +2,14 @@ package com.example.restaurantapp.presentation.menu
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.restaurantapp.data.repository.MenuItemsRepository
+import com.example.restaurantapp.domain.model.MenuItem
 
 class MenuItemsViewModel : ViewModel() {
-    val categoryId = MutableLiveData<Int>()
+    private val repository = MenuItemsRepository()
+    val menuItems = MutableLiveData<List<MenuItem>>()
 
-    fun loadItems(id: Int) {
-        categoryId.value = id
+    fun loadMenuItems(categoryId: Int) {
+        menuItems.value = repository.getMenuItemsByCategoryId(categoryId)
     }
 }

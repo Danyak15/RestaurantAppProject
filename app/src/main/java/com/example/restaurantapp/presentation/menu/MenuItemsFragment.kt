@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.NavArgs
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.restaurantapp.R
 import com.example.restaurantapp.databinding.FragmentMenuItemsBinding
 
@@ -28,10 +29,17 @@ class MenuItemsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val categoryId = args.categoryId
-        binding.tv.text = categoryId.toString()
+        val adapter = MenuItemsAdapter { item ->
 
-        viewModel.categoryId.observe(viewLifecycleOwner) { categoryId ->
-            viewModel.categoryId.value = categoryId
         }
+
+        binding.recyclerViewMenuItems.layoutManager = LinearLayoutManager(context)
+        binding.recyclerViewMenuItems.adapter = adapter
+
+        viewModel.menuItems.observe(viewLifecycleOwner) { items ->
+            adapter.submitList(items)
+        }
+
+        viewModel.loadMenuItems(categoryId)
     }
 }
