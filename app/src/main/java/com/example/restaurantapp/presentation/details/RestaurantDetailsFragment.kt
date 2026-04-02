@@ -25,7 +25,7 @@ class RestaurantDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val restaurantId = args.restaurantId
-        binding.viewPager.adapter = RestaurantPagerAdapter(requireActivity(), restaurantId)
+        binding.viewPager.adapter = RestaurantPagerAdapter(this, restaurantId)
 
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = when (position) {

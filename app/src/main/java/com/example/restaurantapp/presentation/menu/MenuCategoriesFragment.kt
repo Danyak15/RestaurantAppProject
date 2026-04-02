@@ -1,16 +1,15 @@
 package com.example.restaurantapp.presentation.menu
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.restaurantapp.databinding.FragmentMenuCategoriesBinding
-import com.example.restaurantapp.presentation.restaurants.RestaurantsAdapter
+import com.example.restaurantapp.presentation.details.RestaurantDetailsFragmentDirections
 
 
 class MenuCategoriesFragment : Fragment() {
@@ -31,9 +30,9 @@ class MenuCategoriesFragment : Fragment() {
         val restaurantId = arguments?.getInt("restaurantId") ?: 0
 
         val adapter = MenuCategoriesAdapter { category ->
-            val action = MenuCategoriesFragmentDirections
-                .actionMenuCategoriesFragmentToMenuItemsFragment(category.id)
-            parentFragment?.findNavController()?.navigate(action)
+            val action = RestaurantDetailsFragmentDirections
+                .actionRestaurantDetailsFragmentToMenuItemsFragment(category.id)
+            findNavController().navigate(action)
         }
 
         binding.recyclerViewCategories.adapter = adapter

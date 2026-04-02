@@ -28,33 +28,17 @@
     <fragment
         android:id="@+id/restaurantDetailsFragment"
         android:name="com.example.restaurantapp.presentation.details.RestaurantDetailsFragment"
-        android:label="fragment_restaurant_detail"
+        android:label="fragment_restaurant_details"
         tools:layout="@layout/fragment_restaurant_details">
 
         <argument
             android:name="restaurantId"
             app:argType="integer" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/menuCategoriesFragment"
-        android:name="com.example.restaurantapp.presentation.menu.MenuCategoriesFragment"
-        android:label="fragment_menu_categories"
-        tools:layout="@layout/fragment_menu_categories" >
         <action
-            android:id="@+id/action_menuCategoriesFragment_to_menuItemsFragment"
+            android:id="@+id/action_restaurantDetailsFragment_to_menuItemsFragment"
             app:destination="@id/menuItemsFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/bookFragment"
-        android:name="com.example.restaurantapp.presentation.booking.BookFragment"
-        android:label="fragment_book"
-        tools:layout="@layout/fragment_book" />
-    <fragment
-        android:id="@+id/infoFragment"
-        android:name="com.example.restaurantapp.presentation.info.InfoFragment"
-        android:label="fragment_info"
-        tools:layout="@layout/fragment_info" />
+
     <fragment
         android:id="@+id/menuItemsFragment"
         android:name="com.example.restaurantapp.presentation.menu.MenuItemsFragment"

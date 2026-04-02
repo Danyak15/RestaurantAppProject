@@ -9,9 +9,9 @@ import com.example.restaurantapp.presentation.info.InfoFragment
 import com.example.restaurantapp.presentation.menu.MenuCategoriesFragment
 
 class RestaurantPagerAdapter(
-    fragmentActivity: FragmentActivity,
+    fragment: Fragment,
     private val restaurantId: Int
-) : FragmentStateAdapter(fragmentActivity) {
+) : FragmentStateAdapter(fragment) {
     override fun createFragment(position: Int): Fragment {
         return when(position) {
             0 -> InfoFragment().apply {
