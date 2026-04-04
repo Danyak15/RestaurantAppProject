@@ -10,7 +10,7 @@ import com.example.restaurantapp.domain.model.MenuItem
 
 class MenuItemsAdapter(
     private val onItemClick: (MenuItem) -> Unit
-) : ListAdapter<MenuItem, MenuItemsAdapter.MenuItemViewHolder>(MenuItemDiffCallback()){
+) : ListAdapter<MenuItem, MenuItemsAdapter.MenuItemViewHolder>(diffCallback){
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -19,20 +19,15 @@ class MenuItemsAdapter(
             LayoutInflater.from(parent.context),
             parent,
             false)
-        return MenuItemViewHolder(binding, onItemClick)
+        return MenuItemViewHolder(binding)
     }
 
-    override fun onBindViewHolder(
-        holder: MenuItemViewHolder,
-        position: Int
-    ) {
+    override fun onBindViewHolder(holder: MenuItemViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-
-    class MenuItemViewHolder(
-        private val binding: ItemMenuItemBinding,
-        private val onItemClick: (MenuItem) -> Unit
+    inner class MenuItemViewHolder(
+        private val binding: ItemMenuItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: MenuItem) {
             binding.menuItem = item
@@ -44,19 +39,13 @@ class MenuItemsAdapter(
         }
     }
 
-    class MenuItemDiffCallback : DiffUtil.ItemCallback<MenuItem>() {
-        override fun areItemsTheSame(
-            oldItem: MenuItem,
-            newItem: MenuItem
-        ): Boolean {
-            return oldItem.id == newItem.id
-        }
+    companion object {
+        private val diffCallback = object : DiffUtil.ItemCallback<MenuItem>() {
+            override fun areItemsTheSame(oldItem: MenuItem, newItem: MenuItem) =
+                oldItem.id == newItem.id
 
-        override fun areContentsTheSame(
-            oldItem: MenuItem,
-            newItem: MenuItem
-        ): Boolean {
-            return oldItem == newItem
+            override fun areContentsTheSame(oldItem: MenuItem, newItem: MenuItem) =
+                oldItem == newItem
         }
     }
 }

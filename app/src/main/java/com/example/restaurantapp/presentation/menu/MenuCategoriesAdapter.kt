@@ -9,8 +9,8 @@ import com.example.restaurantapp.databinding.ItemMenuCategoryBinding
 import com.example.restaurantapp.domain.model.Category
 
 class MenuCategoriesAdapter(
-    private val onItemClicked: (Category) -> Unit
-    ) : ListAdapter<Category, MenuCategoriesAdapter.MenuCategoriesViewHolder>(CategoriesDiffCallback()) {
+    private val onItemClick: (Category) -> Unit
+    ) : ListAdapter<Category, MenuCategoriesAdapter.MenuCategoriesViewHolder>(diffCallback) {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -20,44 +20,33 @@ class MenuCategoriesAdapter(
             parent,
             false
         )
-        return MenuCategoriesViewHolder(binding, onItemClicked)
+        return MenuCategoriesViewHolder(binding)
     }
 
-    override fun onBindViewHolder(
-        holder: MenuCategoriesViewHolder,
-        position: Int
-    ) {
+    override fun onBindViewHolder(holder: MenuCategoriesViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    class MenuCategoriesViewHolder(
-        private val binding: ItemMenuCategoryBinding,
-        private val onItemClicked: (Category) -> Unit
+    inner class MenuCategoriesViewHolder(
+        private val binding: ItemMenuCategoryBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(category: Category) {
             binding.category = category
             binding.executePendingBindings()
 
             itemView.setOnClickListener {
-                onItemClicked(category)
+                onItemClick(category)
             }
         }
     }
 
-    class CategoriesDiffCallback : DiffUtil.ItemCallback<Category>() {
-        override fun areItemsTheSame(
-            oldItem: Category,
-            newItem: Category
-        ): Boolean {
-            return oldItem.id == newItem.id
-        }
+    companion object {
+        private val diffCallback = object : DiffUtil.ItemCallback<Category>() {
+            override fun areItemsTheSame(oldItem: Category, newItem: Category) =
+                oldItem.id == newItem.id
 
-        override fun areContentsTheSame(
-            oldItem: Category,
-            newItem: Category
-        ): Boolean {
-            return oldItem == newItem
+            override fun areContentsTheSame(oldItem: Category, newItem: Category) =
+                oldItem == newItem
         }
-
     }
 }
