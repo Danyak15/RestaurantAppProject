@@ -12,7 +12,8 @@ import com.example.restaurantapp.databinding.FragmentMenuItemBinding
 
 
 class MenuItemFragment : Fragment() {
-    private lateinit var binding: FragmentMenuItemBinding
+    private var _binding: FragmentMenuItemBinding? = null
+    private val binding get() = _binding!!
     private val args: MenuItemFragmentArgs by navArgs()
     private val viewModel: MenuItemViewModel by viewModels()
 
@@ -20,7 +21,7 @@ class MenuItemFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentMenuItemBinding.inflate(inflater, container, false)
+        _binding = FragmentMenuItemBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -35,5 +36,10 @@ class MenuItemFragment : Fragment() {
         }
 
         viewModel.loadMenuItem(menuItemId)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

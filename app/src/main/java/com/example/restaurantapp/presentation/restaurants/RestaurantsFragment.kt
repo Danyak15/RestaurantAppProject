@@ -13,14 +13,15 @@ import com.example.restaurantapp.data.repository.RestaurantsRepository
 import com.example.restaurantapp.databinding.FragmentRestaurantsBinding
 
 class RestaurantsFragment : Fragment() {
-    private lateinit var binding: FragmentRestaurantsBinding
+    private var _binding: FragmentRestaurantsBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: RestaurantsViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentRestaurantsBinding.inflate(inflater, container, false)
+        _binding = FragmentRestaurantsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -39,5 +40,10 @@ class RestaurantsFragment : Fragment() {
         viewModel.restaurants.observe(viewLifecycleOwner) { restaurants ->
             adapter.submitList(restaurants)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

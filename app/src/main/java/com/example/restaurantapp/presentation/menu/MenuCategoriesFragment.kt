@@ -13,14 +13,15 @@ import com.example.restaurantapp.presentation.details.RestaurantDetailsFragmentD
 
 
 class MenuCategoriesFragment : Fragment() {
-    private lateinit var binding: FragmentMenuCategoriesBinding
+    private var _binding: FragmentMenuCategoriesBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: MenuCategoriesViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentMenuCategoriesBinding.inflate(inflater, container, false)
+        _binding = FragmentMenuCategoriesBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -43,5 +44,10 @@ class MenuCategoriesFragment : Fragment() {
         }
 
         viewModel.loadCategories(restaurantId)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

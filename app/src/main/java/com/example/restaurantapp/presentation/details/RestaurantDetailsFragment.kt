@@ -10,14 +10,15 @@ import com.example.restaurantapp.databinding.FragmentRestaurantDetailsBinding
 import com.google.android.material.tabs.TabLayoutMediator
 
 class RestaurantDetailsFragment : Fragment() {
-    private lateinit var binding: FragmentRestaurantDetailsBinding
+    private var _binding: FragmentRestaurantDetailsBinding? = null
+    private val binding get() = _binding!!
     private val args: RestaurantDetailsFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentRestaurantDetailsBinding.inflate(inflater, container, false)
+        _binding = FragmentRestaurantDetailsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -35,5 +36,10 @@ class RestaurantDetailsFragment : Fragment() {
                 else -> "Информация"
             }
         }.attach()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
