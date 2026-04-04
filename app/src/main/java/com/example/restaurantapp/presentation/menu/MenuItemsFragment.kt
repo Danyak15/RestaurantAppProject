@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.NavArgs
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.restaurantapp.R
@@ -29,8 +30,11 @@ class MenuItemsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val categoryId = args.categoryId
-        val adapter = MenuItemsAdapter { item ->
 
+        val adapter = MenuItemsAdapter { item ->
+            val action = MenuItemsFragmentDirections
+                .actionMenuItemsFragmentToMenuItemFragment(item.id)
+            findNavController().navigate(action)
         }
 
         binding.recyclerViewMenuItems.layoutManager = LinearLayoutManager(context)
