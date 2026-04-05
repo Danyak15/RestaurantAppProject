@@ -9,22 +9,21 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
-import com.example.restaurantapp.R
-import com.example.restaurantapp.data.repository.MenuItemsRepositoryImpl
-import com.example.restaurantapp.databinding.FragmentMenuItemBinding
-import com.example.restaurantapp.domain.repository.MenuItemsRepository
+import com.example.restaurantapp.data.repository.DishesRepositoryImpl
+import com.example.restaurantapp.databinding.FragmentDishDetailsBinding
+import com.example.restaurantapp.domain.repository.DishesRepository
 
 
-class MenuItemFragment : Fragment() {
-    private var _binding: FragmentMenuItemBinding? = null
+class DishDetailsFragment : Fragment() {
+    private var _binding: FragmentDishDetailsBinding? = null
     private val binding get() = _binding!!
-    private val args: MenuItemFragmentArgs by navArgs()
-    private val viewModel: MenuItemViewModel by viewModels {
+    private val args: DishDetailsFragmentArgs by navArgs()
+    private val viewModel: DishDetailsViewModel by viewModels {
         object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                val repository: MenuItemsRepository = MenuItemsRepositoryImpl()
-                return MenuItemViewModel(repository) as T
+                val repository: DishesRepository = DishesRepositoryImpl()
+                return DishDetailsViewModel(repository) as T
             }
         }
     }
@@ -33,21 +32,21 @@ class MenuItemFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentMenuItemBinding.inflate(inflater, container, false)
+        _binding = FragmentDishDetailsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val menuItemId = args.menuItemId
+        val dishId = args.dishId
 
-        viewModel.menuItem.observe(viewLifecycleOwner) { menuItem ->
-            binding.menuItem = menuItem
+        viewModel.dish.observe(viewLifecycleOwner) { dish ->
+            binding.dish = dish
             binding.executePendingBindings()
         }
 
-        viewModel.loadMenuItem(menuItemId)
+        viewModel.loadDishDetails(dishId)
     }
 
     override fun onDestroyView() {

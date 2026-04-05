@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
     <data>
         <variable
-            name="menuItem"
-            type="com.example.restaurantapp.domain.model.MenuItem" />
+            name="dish"
+            type="com.example.restaurantapp.domain.model.Dish" />
     </data>
 
     <LinearLayout
@@ -15,7 +15,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{menuItem.name}"
+            android:text="@{dish.name}"
             tools:text="Название позиции в меню" />
     </LinearLayout>
 </layout>

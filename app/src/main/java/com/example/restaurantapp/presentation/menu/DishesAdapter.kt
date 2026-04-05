@@ -5,17 +5,17 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.restaurantapp.databinding.ItemMenuItemBinding
-import com.example.restaurantapp.domain.model.MenuItem
+import com.example.restaurantapp.databinding.ItemDishBinding
+import com.example.restaurantapp.domain.model.Dish
 
-class MenuItemsAdapter(
-    private val onItemClick: (MenuItem) -> Unit
-) : ListAdapter<MenuItem, MenuItemsAdapter.MenuItemViewHolder>(diffCallback){
+class DishesAdapter(
+    private val onItemClick: (Dish) -> Unit
+) : ListAdapter<Dish, DishesAdapter.MenuItemViewHolder>(diffCallback){
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): MenuItemViewHolder {
-        val binding = ItemMenuItemBinding.inflate(
+        val binding = ItemDishBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false)
@@ -27,24 +27,24 @@ class MenuItemsAdapter(
     }
 
     inner class MenuItemViewHolder(
-        private val binding: ItemMenuItemBinding
+        private val binding: ItemDishBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: MenuItem) {
-            binding.menuItem = item
+        fun bind(dish: Dish) {
+            binding.dish = dish
             binding.executePendingBindings()
 
             itemView.setOnClickListener {
-                onItemClick(item)
+                onItemClick(dish)
             }
         }
     }
 
     companion object {
-        private val diffCallback = object : DiffUtil.ItemCallback<MenuItem>() {
-            override fun areItemsTheSame(oldItem: MenuItem, newItem: MenuItem) =
+        private val diffCallback = object : DiffUtil.ItemCallback<Dish>() {
+            override fun areItemsTheSame(oldItem: Dish, newItem: Dish) =
                 oldItem.id == newItem.id
 
-            override fun areContentsTheSame(oldItem: MenuItem, newItem: MenuItem) =
+            override fun areContentsTheSame(oldItem: Dish, newItem: Dish) =
                 oldItem == newItem
         }
     }

@@ -1,6 +1,6 @@
 package com.example.restaurantapp.domain.model
 
-data class MenuItem(
+data class Dish(
     val id: Int,
     val categoryId: Int,
     val name: String,

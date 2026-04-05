@@ -35,31 +35,31 @@
             android:name="restaurantId"
             app:argType="integer" />
         <action
-            android:id="@+id/action_restaurantDetailsFragment_to_menuItemsFragment"
-            app:destination="@id/menuItemsFragment" />
+            android:id="@+id/action_restaurantDetailsFragment_to_dishesFragment"
+            app:destination="@id/dishesFragment" />
     </fragment>
 
     <fragment
-        android:id="@+id/menuItemsFragment"
-        android:name="com.example.restaurantapp.presentation.menu.MenuItemsFragment"
-        android:label="fragment_menu_items"
-        tools:layout="@layout/fragment_menu_items">
+        android:id="@+id/dishesFragment"
+        android:name="com.example.restaurantapp.presentation.menu.DishesFragment"
+        android:label="fragment_dishes"
+        tools:layout="@layout/fragment_dishes">
 
         <argument
             android:name="categoryId"
             app:argType="integer" />
         <action
-            android:id="@+id/action_menuItemsFragment_to_menuItemFragment"
-            app:destination="@id/menuItemFragment" />
+            android:id="@+id/action_dishesFragment_to_dishDetailsFragment"
+            app:destination="@id/dishDetailsFragment" />
     </fragment>
     <fragment
-        android:id="@+id/menuItemFragment"
-        android:name="com.example.restaurantapp.presentation.menu.MenuItemFragment"
-        android:label="fragment_menu_item"
-        tools:layout="@layout/fragment_menu_item">
+        android:id="@+id/dishDetailsFragment"
+        android:name="com.example.restaurantapp.presentation.menu.DishDetailsFragment"
+        android:label="fragment_dish_details"
+        tools:layout="@layout/fragment_dish_details">
 
         <argument
-            android:name="menuItemId"
+            android:name="dishId"
             app:argType="integer" />
     </fragment>
 

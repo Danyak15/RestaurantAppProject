@@ -2,11 +2,11 @@
 <layout xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    tools:context=".presentation.menu.MenuItemFragment">
+    tools:context=".presentation.menu.DishDetailsFragment">
     <data>
         <variable
-            name="menuItem"
-            type="com.example.restaurantapp.domain.model.MenuItem" />
+            name="dish"
+            type="com.example.restaurantapp.domain.model.Dish" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -16,7 +16,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{menuItem.name}"
+            android:text="@{dish.name}"
             tools:text="Название блюда"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
