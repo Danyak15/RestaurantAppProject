@@ -10,23 +10,23 @@ import com.example.restaurantapp.domain.model.Dish
 
 class DishesAdapter(
     private val onItemClick: (Dish) -> Unit
-) : ListAdapter<Dish, DishesAdapter.MenuItemViewHolder>(diffCallback){
+) : ListAdapter<Dish, DishesAdapter.DishViewHolder>(diffCallback){
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): MenuItemViewHolder {
+    ): DishViewHolder {
         val binding = ItemDishBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false)
-        return MenuItemViewHolder(binding)
+        return DishViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: MenuItemViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: DishViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    inner class MenuItemViewHolder(
+    inner class DishViewHolder(
         private val binding: ItemDishBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(dish: Dish) {
