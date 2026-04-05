@@ -6,16 +6,26 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.restaurantapp.data.repository.RestaurantsRepository
+import com.example.restaurantapp.data.repository.RestaurantsRepositoryImpl
 import com.example.restaurantapp.databinding.FragmentRestaurantsBinding
+import com.example.restaurantapp.domain.repository.RestaurantsRepository
 
 class RestaurantsFragment : Fragment() {
     private var _binding: FragmentRestaurantsBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: RestaurantsViewModel by viewModels()
+    private val viewModel: RestaurantsViewModel by viewModels {
+        object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                val repository: RestaurantsRepository = RestaurantsRepositoryImpl()
+                return RestaurantsViewModel(repository) as T
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
