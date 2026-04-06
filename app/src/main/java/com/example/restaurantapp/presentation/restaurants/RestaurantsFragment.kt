@@ -40,7 +40,7 @@ class RestaurantsFragment : Fragment() {
 
         val adapter = RestaurantsAdapter { restaurant ->
             val action = RestaurantsFragmentDirections
-                .actionRestaurantsFragmentToRestaurantDetailFragment(restaurant.id)
+                .actionRestaurantsFragmentToRestaurantDetailFragment(restaurant.id, restaurant.name)
             findNavController().navigate(action)
         }
 

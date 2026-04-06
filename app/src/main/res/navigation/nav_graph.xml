@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/restaurantsFragment"
         android:name="com.example.restaurantapp.presentation.restaurants.RestaurantsFragment"
-        android:label="fragment_restaurants"
+        android:label="Рестораны"
         tools:layout="@layout/fragment_restaurants" >
         <action
             android:id="@+id/action_restaurantsFragment_to_restaurantDetailFragment"
@@ -18,22 +18,25 @@
     <fragment
         android:id="@+id/newsFragment"
         android:name="com.example.restaurantapp.presentation.news.NewsFragment"
-        android:label="fragment_news"
+        android:label="Новости"
         tools:layout="@layout/fragment_news" />
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.restaurantapp.presentation.profile.ProfileFragment"
-        android:label="fragment_profile"
+        android:label="Профиль"
         tools:layout="@layout/fragment_profile" />
     <fragment
         android:id="@+id/restaurantDetailsFragment"
         android:name="com.example.restaurantapp.presentation.details.RestaurantDetailsFragment"
-        android:label="fragment_restaurant_details"
+        android:label="{restaurantName}"
         tools:layout="@layout/fragment_restaurant_details">
 
         <argument
             android:name="restaurantId"
             app:argType="integer" />
+        <argument
+            android:name="restaurantName"
+            app:argType="string" />
         <action
             android:id="@+id/action_restaurantDetailsFragment_to_dishesFragment"
             app:destination="@id/dishesFragment" />
@@ -42,12 +45,15 @@
     <fragment
         android:id="@+id/dishesFragment"
         android:name="com.example.restaurantapp.presentation.menu.DishesFragment"
-        android:label="fragment_dishes"
+        android:label="{categoryName}"
         tools:layout="@layout/fragment_dishes">
 
         <argument
             android:name="categoryId"
             app:argType="integer" />
+        <argument
+            android:name="categoryName"
+            app:argType="string" />
         <action
             android:id="@+id/action_dishesFragment_to_dishDetailsFragment"
             app:destination="@id/dishDetailsFragment" />

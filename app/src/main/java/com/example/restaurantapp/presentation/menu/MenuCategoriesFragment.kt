@@ -44,7 +44,7 @@ class MenuCategoriesFragment : Fragment() {
 
         val adapter = MenuCategoriesAdapter { category ->
             val action = RestaurantDetailsFragmentDirections
-                .actionRestaurantDetailsFragmentToDishesFragment(category.id)
+                .actionRestaurantDetailsFragmentToDishesFragment(category.id, category.name)
             findNavController().navigate(action)
         }
 
