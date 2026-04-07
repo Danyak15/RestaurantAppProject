@@ -13,6 +13,7 @@ fun RestaurantEntity.toDomain() = Restaurant(
 )
 
 fun Restaurant.toEntity() = RestaurantEntity(
+    id = id,
     name = name,
     cuisine = cuisine,
     rating = rating,

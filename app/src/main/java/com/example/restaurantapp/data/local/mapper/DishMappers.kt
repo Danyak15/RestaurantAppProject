@@ -11,3 +11,12 @@ fun DishEntity.toDomain() = Dish(
     weight = weight,
     description = description
 )
+
+fun Dish.toEntity() = DishEntity(
+    id = id,
+    categoryId = categoryId,
+    name = name,
+    price = price,
+    weight = weight,
+    description = description
+)

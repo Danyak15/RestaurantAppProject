@@ -16,6 +16,9 @@ interface RestaurantDao {
     @Query("SELECT * FROM restaurants WHERE id = :id")
     suspend fun getRestaurantById(id: Int): RestaurantEntity?
 
+    @Query("SELECT COUNT(*) FROM restaurants")
+    suspend fun getCount(): Int
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(items: List<RestaurantEntity>)
 }
