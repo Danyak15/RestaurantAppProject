@@ -8,22 +8,19 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.restaurantapp.RestaurantApplication
 import com.example.restaurantapp.data.repository.RestaurantsRepositoryImpl
 import com.example.restaurantapp.databinding.FragmentInfoBinding
 import com.example.restaurantapp.domain.repository.RestaurantsRepository
 import com.example.restaurantapp.presentation.restaurants.RestaurantsViewModel
+import com.example.restaurantapp.presentation.restaurants.RestaurantsViewModelFactory
 
 class InfoFragment : Fragment() {
     private var _binding: FragmentInfoBinding? = null
     private val binding get() = _binding!!
     private val viewModel: InfoViewModel by viewModels {
-        object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                val repository: RestaurantsRepository = RestaurantsRepositoryImpl()
-                return InfoViewModel(repository) as T
-            }
-        }
+        val appContainer = (requireActivity().application as RestaurantApplication).appContainer
+        InfoViewModelFactory(appContainer.restaurantsRepository)
     }
 
     override fun onCreateView(
