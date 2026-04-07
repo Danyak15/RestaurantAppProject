@@ -12,26 +12,25 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.restaurantapp.RestaurantApplication
 import com.example.restaurantapp.data.repository.CategoriesRepositoryImpl
 import com.example.restaurantapp.data.repository.DishesRepositoryImpl
 import com.example.restaurantapp.databinding.FragmentMenuCategoriesBinding
 import com.example.restaurantapp.domain.repository.CategoriesRepository
 import com.example.restaurantapp.domain.repository.DishesRepository
 import com.example.restaurantapp.presentation.details.RestaurantDetailsFragmentDirections
+import com.example.restaurantapp.presentation.info.InfoViewModelFactory
 
 
 class MenuCategoriesFragment : Fragment() {
     private var _binding: FragmentMenuCategoriesBinding? = null
     private val binding get() = _binding!!
     private val viewModel: MenuCategoriesViewModel by viewModels {
-        object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                val categoriesRepository: CategoriesRepository = CategoriesRepositoryImpl()
-                val dishesRepository: DishesRepository = DishesRepositoryImpl()
-                return MenuCategoriesViewModel(categoriesRepository, dishesRepository) as T
-            }
-        }
+        val appContainer = (requireActivity().application as RestaurantApplication).appContainer
+        MenuCategoriesViewModelFactory(
+            appContainer.categoriesRepository,
+            appContainer.dishesRepository
+        )
     }
     private val categoriesAdapter by lazy {
         MenuCategoriesAdapter { category ->

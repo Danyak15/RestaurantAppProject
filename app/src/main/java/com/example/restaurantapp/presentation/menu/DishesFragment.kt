@@ -11,22 +11,19 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.restaurantapp.RestaurantApplication
 import com.example.restaurantapp.data.repository.DishesRepositoryImpl
 import com.example.restaurantapp.databinding.FragmentDishesBinding
 import com.example.restaurantapp.domain.repository.DishesRepository
+import com.example.restaurantapp.presentation.info.InfoViewModelFactory
 
 class DishesFragment : Fragment() {
     private var _binding: FragmentDishesBinding? = null
     private val binding get() = _binding!!
     private val args: DishesFragmentArgs by navArgs()
     private val viewModel: DishesViewModel by viewModels {
-        object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                val repository: DishesRepository = DishesRepositoryImpl()
-                return DishesViewModel(repository) as T
-            }
-        }
+        val appContainer = (requireActivity().application as RestaurantApplication).appContainer
+        DishesViewModelFactory(appContainer.dishesRepository)
     }
 
     override fun onCreateView(

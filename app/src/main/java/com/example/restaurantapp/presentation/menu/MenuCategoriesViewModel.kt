@@ -3,10 +3,13 @@ package com.example.restaurantapp.presentation.menu
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.restaurantapp.domain.model.Category
 import com.example.restaurantapp.domain.model.Dish
 import com.example.restaurantapp.domain.repository.CategoriesRepository
 import com.example.restaurantapp.domain.repository.DishesRepository
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 class MenuCategoriesViewModel(
     private val categoriesRepository: CategoriesRepository,
@@ -25,13 +28,17 @@ class MenuCategoriesViewModel(
     val searchText: LiveData<String> = _searchText
 
     fun loadCategories(restaurantId: Int) {
-        allCategories = categoriesRepository.getCategoriesByRestaurantId(restaurantId)
-        allDishes = allCategories.flatMap { category ->
-            dishesRepository.getDishesByCategoryId(category.id)
-        }
+        viewModelScope.launch {
+            allCategories = categoriesRepository.getCategoriesByRestaurantId(restaurantId).first()
 
-        _categories.value = allCategories
-        _foundDishes.value = emptyList()
+
+            allDishes = allCategories.flatMap { category ->
+                dishesRepository.getDishesByCategoryId(category.id).first()
+            }
+
+            _categories.value = allCategories
+            _foundDishes.value = emptyList()
+        }
     }
 
     fun onSearchTextChanged(newSearchText: String) {

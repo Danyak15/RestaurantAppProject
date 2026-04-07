@@ -5,8 +5,10 @@ import androidx.room.Room
 import com.example.restaurantapp.data.local.AppDatabase
 import com.example.restaurantapp.data.local.DatabaseSeeder
 import com.example.restaurantapp.data.repository.CategoriesRepositoryImpl
+import com.example.restaurantapp.data.repository.DishesRepositoryImpl
 import com.example.restaurantapp.data.repository.RestaurantsRepositoryImpl
 import com.example.restaurantapp.domain.repository.CategoriesRepository
+import com.example.restaurantapp.domain.repository.DishesRepository
 import com.example.restaurantapp.domain.repository.RestaurantsRepository
 
 class AppContainer(context: Context) {
@@ -19,8 +21,11 @@ class AppContainer(context: Context) {
     val restaurantsRepository: RestaurantsRepository =
         RestaurantsRepositoryImpl(database.restaurantDao())
 
-//    val categoriesRepository: CategoriesRepository =
-//        CategoriesRepositoryImpl(database.categoryDao())
+    val categoriesRepository: CategoriesRepository =
+        CategoriesRepositoryImpl(database.categoryDao())
+
+    val dishesRepository: DishesRepository =
+        DishesRepositoryImpl(database.dishDao())
 
     val databaseSeeder = DatabaseSeeder(
         restaurantDao = database.restaurantDao(),
