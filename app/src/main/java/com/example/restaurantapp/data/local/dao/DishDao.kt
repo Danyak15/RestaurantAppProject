@@ -16,6 +16,9 @@ interface DishDao {
     @Query("SELECT * FROM dishes WHERE id = :id LIMIT 1")
     suspend fun getDishById(id: Int): DishEntity?
 
+    @Query("UPDATE dishes SET isFavorite = :isFavorite WHERE id = :id")
+    suspend fun updateFavoriteStatus(id: Int, isFavorite: Boolean)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(items: List<DishEntity>)
 }

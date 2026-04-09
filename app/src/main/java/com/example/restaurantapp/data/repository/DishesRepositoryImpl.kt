@@ -20,4 +20,8 @@ class DishesRepositoryImpl(
     override suspend fun getDishById(id: Int): Dish? {
         return dishDao.getDishById(id)?.toDomain()
     }
+
+    override suspend fun updateFavoriteStatus(id: Int, isFavorite: Boolean) {
+        dishDao.updateFavoriteStatus(id, isFavorite)
+    }
 }

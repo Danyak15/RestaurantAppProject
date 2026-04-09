@@ -14,9 +14,19 @@ class DishDetailsViewModel(
     private val _dish = MutableLiveData<Dish>()
     val dish: LiveData<Dish> = _dish
 
-    fun loadDishDetails(menuItemId: Int) {
+    fun loadDishDetails(dishId: Int) {
         viewModelScope.launch {
-            _dish.value = repository.getDishById(menuItemId)
+            _dish.value = repository.getDishById(dishId)
+        }
+    }
+
+    fun toggleFavorite() {
+        val currentDish = _dish.value ?: return
+        val newValue = !currentDish.isFavorite
+
+        viewModelScope.launch {
+            repository.updateFavoriteStatus(currentDish.id, newValue)
+            _dish.value = currentDish.copy(isFavorite = newValue)
         }
     }
 }

@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
+import com.example.restaurantapp.R
 import com.example.restaurantapp.RestaurantApplication
 import com.example.restaurantapp.data.repository.DishesRepositoryImpl
 import com.example.restaurantapp.databinding.FragmentDishDetailsBinding
@@ -40,10 +41,15 @@ class DishDetailsFragment : Fragment() {
 
         viewModel.dish.observe(viewLifecycleOwner) { dish ->
             binding.dish = dish
+            binding.btnFavorite.isSelected = dish.isFavorite
             binding.executePendingBindings()
         }
 
         viewModel.loadDishDetails(dishId)
+
+        binding.btnFavorite.setOnClickListener {
+            viewModel.toggleFavorite()
+        }
     }
 
     override fun onDestroyView() {

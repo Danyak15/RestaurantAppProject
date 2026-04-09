@@ -9,7 +9,8 @@ fun DishEntity.toDomain() = Dish(
     name = name,
     price = price,
     weight = weight,
-    description = description
+    description = description,
+    isFavorite = isFavorite
 )
 
 fun Dish.toEntity() = DishEntity(
@@ -18,5 +19,6 @@ fun Dish.toEntity() = DishEntity(
     name = name,
     price = price,
     weight = weight,
-    description = description
+    description = description,
+    isFavorite = isFavorite
 )
