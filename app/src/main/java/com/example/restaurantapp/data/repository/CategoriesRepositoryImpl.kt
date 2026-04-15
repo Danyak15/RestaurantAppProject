@@ -2,8 +2,6 @@ package com.example.restaurantapp.data.repository
 
 import com.example.restaurantapp.data.local.dao.CategoryDao
 import com.example.restaurantapp.data.local.mapper.toDomain
-import com.example.restaurantapp.data.local.mapper.toEntity
-import com.example.restaurantapp.data.mock.MockCategories
 import com.example.restaurantapp.domain.model.Category
 import com.example.restaurantapp.domain.repository.CategoriesRepository
 import kotlinx.coroutines.flow.Flow

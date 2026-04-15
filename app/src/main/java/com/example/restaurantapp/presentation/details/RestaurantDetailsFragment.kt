@@ -17,7 +17,7 @@ class RestaurantDetailsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentRestaurantDetailsBinding.inflate(inflater, container, false)
         return binding.root
     }

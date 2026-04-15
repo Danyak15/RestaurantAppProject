@@ -8,18 +8,11 @@ import android.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.restaurantapp.RestaurantApplication
-import com.example.restaurantapp.data.repository.CategoriesRepositoryImpl
-import com.example.restaurantapp.data.repository.DishesRepositoryImpl
 import com.example.restaurantapp.databinding.FragmentMenuCategoriesBinding
-import com.example.restaurantapp.domain.repository.CategoriesRepository
-import com.example.restaurantapp.domain.repository.DishesRepository
 import com.example.restaurantapp.presentation.details.RestaurantDetailsFragmentDirections
-import com.example.restaurantapp.presentation.info.InfoViewModelFactory
 
 
 class MenuCategoriesFragment : Fragment() {
@@ -50,7 +43,7 @@ class MenuCategoriesFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentMenuCategoriesBinding.inflate(inflater, container, false)
         return binding.root
     }

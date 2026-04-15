@@ -3,7 +3,6 @@ package com.example.restaurantapp.presentation.menu
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.restaurantapp.domain.repository.DishesRepository
-import com.example.restaurantapp.presentation.info.InfoViewModel
 
 class DishDetailsViewModelFactory(
     private val repository: DishesRepository

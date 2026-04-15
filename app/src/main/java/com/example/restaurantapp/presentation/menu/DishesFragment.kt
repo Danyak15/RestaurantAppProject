@@ -6,16 +6,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.restaurantapp.RestaurantApplication
-import com.example.restaurantapp.data.repository.DishesRepositoryImpl
 import com.example.restaurantapp.databinding.FragmentDishesBinding
-import com.example.restaurantapp.domain.repository.DishesRepository
-import com.example.restaurantapp.presentation.info.InfoViewModelFactory
 
 class DishesFragment : Fragment() {
     private var _binding: FragmentDishesBinding? = null

@@ -7,7 +7,6 @@ import androidx.room.Query
 import com.example.restaurantapp.data.local.entity.CategoryEntity
 import kotlinx.coroutines.flow.Flow
 
-
 @Dao
 interface CategoryDao {
     @Query("SELECT * FROM categories WHERE restaurantId = :restaurantId")

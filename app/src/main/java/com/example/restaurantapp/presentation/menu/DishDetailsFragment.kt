@@ -1,20 +1,14 @@
 package com.example.restaurantapp.presentation.menu
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
-import com.example.restaurantapp.R
 import com.example.restaurantapp.RestaurantApplication
-import com.example.restaurantapp.data.repository.DishesRepositoryImpl
 import com.example.restaurantapp.databinding.FragmentDishDetailsBinding
-import com.example.restaurantapp.domain.repository.DishesRepository
-import com.example.restaurantapp.presentation.info.InfoViewModelFactory
 
 
 class DishDetailsFragment : Fragment() {
@@ -29,7 +23,7 @@ class DishDetailsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentDishDetailsBinding.inflate(inflater, container, false)
         return binding.root
     }
