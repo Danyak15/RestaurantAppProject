@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Room
 import com.example.restaurantapp.data.local.AppDatabase
 import com.example.restaurantapp.data.local.DatabaseSeeder
+import com.example.restaurantapp.data.local.auth.SessionManager
+import com.example.restaurantapp.data.remote.repository.AuthRepositoryImpl
 import com.example.restaurantapp.data.repository.CategoriesRepositoryImpl
 import com.example.restaurantapp.data.repository.DishesRepositoryImpl
 import com.example.restaurantapp.data.repository.RestaurantsRepositoryImpl
@@ -17,6 +19,10 @@ class AppContainer(context: Context) {
         AppDatabase::class.java,
         "restaurants_app.db"
     ).build()
+
+    val sessionManager = SessionManager(context)
+
+    val authRepository = AuthRepositoryImpl(NetworkModule.authApi)
 
     val restaurantsRepository: RestaurantsRepository =
         RestaurantsRepositoryImpl(database.restaurantDao())

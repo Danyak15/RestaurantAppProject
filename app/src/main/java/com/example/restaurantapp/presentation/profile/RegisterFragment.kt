@@ -1,60 +1,55 @@
 package com.example.restaurantapp.presentation.profile
 
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.restaurantapp.R
 import com.example.restaurantapp.RestaurantApplication
-import com.example.restaurantapp.data.local.auth.SessionManager
-import com.example.restaurantapp.databinding.FragmentProfileBinding
+import com.example.restaurantapp.databinding.FragmentRegisterBinding
 
-class ProfileFragment : Fragment() {
-    private var _binding: FragmentProfileBinding? = null
+class RegisterFragment : Fragment() {
+    private var _binding: FragmentRegisterBinding? = null
     private val binding get() = _binding!!
-    private lateinit var sessionManager: SessionManager
-    private val viewModel: ProfileViewModel by viewModels {
+    private val viewModel: AuthViewModel by viewModels {
         val appContainer = (requireActivity().application as RestaurantApplication).appContainer
-        ProfileViewModelFactory(appContainer.authRepository)
+        AuthViewModelFactory(
+            appContainer.authRepository,
+            appContainer.sessionManager
+        )
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentProfileBinding.inflate(inflater, container, false)
+        _binding = FragmentRegisterBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        sessionManager = (requireActivity().application as RestaurantApplication)
-            .appContainer
-            .sessionManager
-
-        if (!sessionManager.isAuthorized()) {
-            findNavController().navigate(R.id.action_profileFragment_to_loginFragment)
-            return
-        }
-
-        val email = sessionManager.getEmail() ?: return
-        val password = sessionManager.getPassword() ?: return
-
-        viewModel.loadMe(email, password)
-
         setupClicks()
         observeViewModel()
     }
 
     private fun setupClicks() {
-        binding.btnExit.setOnClickListener {
-            sessionManager.clearSession()
-            findNavController().navigate(R.id.action_profileFragment_to_loginFragment)
+        binding.btnRegister.setOnClickListener {
+            viewModel.register(
+                binding.etName.text.toString().trim(),
+                binding.etSurname.text.toString().trim(),
+                binding.etEmail.text.toString().trim(),
+                binding.etPassword.text.toString().trim()
+            )
+        }
+
+        binding.tvGoToLogin.setOnClickListener {
+            findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
         }
     }
 
@@ -66,9 +61,10 @@ class ProfileFragment : Fragment() {
             }
         }
 
-        viewModel.user.observe(viewLifecycleOwner) { user ->
-            if (user != null) {
-                binding.tvEmail.text = user.email
+        viewModel.isAuthSuccess.observe(viewLifecycleOwner) { success ->
+            if (success) {
+                viewModel.clearAuthSuccess()
+                findNavController().navigate(R.id.action_registerFragment_to_profileFragment)
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.example.restaurantapp
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -30,6 +31,18 @@ class MainActivity : AppCompatActivity() {
 
             binding.bottomNavigationView.setupWithNavController(navController)
             setupActionBarWithNavController(navController, appBarConfiguration)
+
+            navController.addOnDestinationChangedListener { _, destination, _ ->
+                when (destination.id) {
+                    R.id.loginFragment,
+                    R.id.registerFragment -> {
+                        binding.bottomNavigationView.visibility = View.GONE
+                    }
+                    else -> {
+                        binding.bottomNavigationView.visibility = View.VISIBLE
+                    }
+                }
+            }
         }
     }
 
