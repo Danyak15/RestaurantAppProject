@@ -1,4 +1,4 @@
-package com.example.restaurantapp.data.remote.dto
+package com.example.restaurantapp.data.remote.dto.response
 
 data class UserResponse(
     val id: Long?,

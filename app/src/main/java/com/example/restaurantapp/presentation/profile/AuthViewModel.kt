@@ -5,8 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.restaurantapp.data.local.auth.SessionManager
-import com.example.restaurantapp.data.remote.dto.LoginRequest
-import com.example.restaurantapp.data.remote.dto.RegisterRequest
+import com.example.restaurantapp.data.remote.dto.request.LoginRequest
+import com.example.restaurantapp.data.remote.dto.request.RegisterRequest
 import com.example.restaurantapp.domain.repository.AuthRepository
 import kotlinx.coroutines.launch
 

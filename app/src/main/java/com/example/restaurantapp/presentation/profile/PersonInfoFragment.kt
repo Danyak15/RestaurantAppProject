@@ -1,22 +1,18 @@
 package com.example.restaurantapp.presentation.profile
 
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
-import com.example.restaurantapp.R
 import com.example.restaurantapp.RestaurantApplication
-import com.example.restaurantapp.data.local.auth.SessionManager
-import com.example.restaurantapp.databinding.FragmentProfileBinding
+import com.example.restaurantapp.databinding.FragmentPersonInfoBinding
 
-class ProfileFragment : Fragment() {
-    private var _binding: FragmentProfileBinding? = null
+class PersonInfoFragment : Fragment() {
+    private var _binding: FragmentPersonInfoBinding? = null
     private val binding get() = _binding!!
-    private lateinit var sessionManager: SessionManager
     private val viewModel: ProfileViewModel by viewModels {
         val appContainer = (requireActivity().application as RestaurantApplication).appContainer
         ProfileViewModelFactory(appContainer.authRepository, appContainer.sessionManager)
@@ -26,36 +22,26 @@ class ProfileFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentProfileBinding.inflate(inflater, container, false)
+        _binding = FragmentPersonInfoBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        sessionManager = (requireActivity().application as RestaurantApplication)
-            .appContainer
-            .sessionManager
-
-        if (!sessionManager.isAuthorized()) {
-            findNavController().navigate(R.id.action_profileFragment_to_loginFragment)
-            return
-        }
-
         viewModel.getMe()
 
-        setupClicks()
+        setupCLicks()
         observeViewModel()
     }
 
-    private fun setupClicks() {
-        binding.btnExit.setOnClickListener {
-            sessionManager.clearSession()
-            findNavController().navigate(R.id.action_profileFragment_to_loginFragment)
-        }
-
-        binding.btnChange.setOnClickListener {
-            findNavController().navigate(R.id.action_profileFragment_to_personInfoFragment)
+    private fun setupCLicks() {
+        binding.btnUpdate.setOnClickListener {
+            viewModel.updateMe(
+                binding.etName.text.toString().trim(),
+                binding.etSurname.text.toString().trim(),
+                binding.etEmail.text.toString().trim()
+            )
         }
     }
 
@@ -69,7 +55,7 @@ class ProfileFragment : Fragment() {
 
         viewModel.user.observe(viewLifecycleOwner) { user ->
             if (user != null) {
-                binding.tvEmail.text = user.email
+                binding.viewModel = viewModel
             }
         }
     }

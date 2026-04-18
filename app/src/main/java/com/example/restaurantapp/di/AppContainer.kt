@@ -21,8 +21,7 @@ class AppContainer(context: Context) {
     ).build()
 
     val sessionManager = SessionManager(context)
-
-    val authRepository = AuthRepositoryImpl(NetworkModule.authApi)
+    val authRepository = AuthRepositoryImpl(NetworkModule.authApi, sessionManager)
 
     val restaurantsRepository: RestaurantsRepository =
         RestaurantsRepositoryImpl(database.restaurantDao())
