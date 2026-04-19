@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.example.restaurantapp.RestaurantApplication
 import com.example.restaurantapp.databinding.FragmentPersonInfoBinding
 
@@ -15,7 +16,7 @@ class PersonInfoFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: ProfileViewModel by viewModels {
         val appContainer = (requireActivity().application as RestaurantApplication).appContainer
-        ProfileViewModelFactory(appContainer.authRepository, appContainer.sessionManager)
+        ProfileViewModelFactory(appContainer.accountRepository, appContainer.sessionManager)
     }
 
     override fun onCreateView(
@@ -56,6 +57,14 @@ class PersonInfoFragment : Fragment() {
         viewModel.user.observe(viewLifecycleOwner) { user ->
             if (user != null) {
                 binding.viewModel = viewModel
+            }
+        }
+
+        viewModel.isUpdateSuccess.observe(viewLifecycleOwner) { success ->
+            if (success) {
+                viewModel.clearSuccess()
+                Toast.makeText(requireContext(), "Профиль успешно обновлен", Toast.LENGTH_SHORT).show()
+                findNavController().popBackStack()
             }
         }
     }

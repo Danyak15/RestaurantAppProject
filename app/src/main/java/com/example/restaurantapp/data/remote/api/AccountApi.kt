@@ -12,7 +12,7 @@ import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.PUT
 
-interface AuthApi {
+interface AccountApi {
     @POST("auth/register")
     suspend fun register(@Body request: RegisterRequest): Response<Unit>
 

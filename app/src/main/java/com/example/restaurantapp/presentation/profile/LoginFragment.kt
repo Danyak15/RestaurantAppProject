@@ -18,7 +18,7 @@ class LoginFragment : Fragment() {
     private val viewModel: AuthViewModel by viewModels {
         val appContainer = (requireActivity().application as RestaurantApplication).appContainer
         AuthViewModelFactory(
-            appContainer.authRepository,
+            appContainer.accountRepository,
             appContainer.sessionManager
         )
     }

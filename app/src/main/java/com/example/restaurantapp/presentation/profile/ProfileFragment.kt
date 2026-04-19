@@ -10,16 +10,14 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.restaurantapp.R
 import com.example.restaurantapp.RestaurantApplication
-import com.example.restaurantapp.data.local.auth.SessionManager
 import com.example.restaurantapp.databinding.FragmentProfileBinding
 
 class ProfileFragment : Fragment() {
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
-    private lateinit var sessionManager: SessionManager
     private val viewModel: ProfileViewModel by viewModels {
         val appContainer = (requireActivity().application as RestaurantApplication).appContainer
-        ProfileViewModelFactory(appContainer.authRepository, appContainer.sessionManager)
+        ProfileViewModelFactory(appContainer.accountRepository, appContainer.sessionManager)
     }
 
     override fun onCreateView(
@@ -33,11 +31,7 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        sessionManager = (requireActivity().application as RestaurantApplication)
-            .appContainer
-            .sessionManager
-
-        if (!sessionManager.isAuthorized()) {
+        if (!viewModel.checkAuth()) {
             findNavController().navigate(R.id.action_profileFragment_to_loginFragment)
             return
         }
@@ -50,7 +44,7 @@ class ProfileFragment : Fragment() {
 
     private fun setupClicks() {
         binding.btnExit.setOnClickListener {
-            sessionManager.clearSession()
+            viewModel.clearSession()
             findNavController().navigate(R.id.action_profileFragment_to_loginFragment)
         }
 

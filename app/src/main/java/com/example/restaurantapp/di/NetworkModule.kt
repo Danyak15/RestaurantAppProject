@@ -1,6 +1,6 @@
 package com.example.restaurantapp.di
 
-import com.example.restaurantapp.data.remote.api.AuthApi
+import com.example.restaurantapp.data.remote.api.AccountApi
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -24,5 +24,5 @@ object NetworkModule {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    val authApi: AuthApi = retrofit.create(AuthApi::class.java)
+    val accountApi: AccountApi = retrofit.create(AccountApi::class.java)
 }

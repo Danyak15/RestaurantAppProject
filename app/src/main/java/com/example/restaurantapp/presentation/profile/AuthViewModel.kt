@@ -5,13 +5,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.restaurantapp.data.local.auth.SessionManager
-import com.example.restaurantapp.data.remote.dto.request.LoginRequest
-import com.example.restaurantapp.data.remote.dto.request.RegisterRequest
-import com.example.restaurantapp.domain.repository.AuthRepository
+import com.example.restaurantapp.domain.repository.AccountRepository
 import kotlinx.coroutines.launch
 
 class AuthViewModel(
-    private val authRepository: AuthRepository,
+    private val accountRepository: AccountRepository,
     private val sessionManager: SessionManager
 ) : ViewModel() {
     private val _errorMessage = MutableLiveData<String?>()
@@ -27,9 +25,7 @@ class AuthViewModel(
         }
 
         viewModelScope.launch {
-            val result = authRepository.login(
-                LoginRequest(email, password)
-            )
+            val result = accountRepository.login(email, password)
 
             result.onSuccess {
                 sessionManager.saveCredentials(email, password)
@@ -47,9 +43,7 @@ class AuthViewModel(
         }
 
         viewModelScope.launch {
-            val result = authRepository.register(
-                RegisterRequest(name, surname, email, password)
-            )
+            val result = accountRepository.register(name, surname, email, password)
 
             result.onSuccess {
                 sessionManager.saveCredentials(email, password)
