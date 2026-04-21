@@ -17,10 +17,7 @@ class LoginFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: AuthViewModel by viewModels {
         val appContainer = (requireActivity().application as RestaurantApplication).appContainer
-        AuthViewModelFactory(
-            appContainer.accountRepository,
-            appContainer.sessionManager
-        )
+        AuthViewModelFactory(appContainer.accountRepository)
     }
 
     override fun onCreateView(

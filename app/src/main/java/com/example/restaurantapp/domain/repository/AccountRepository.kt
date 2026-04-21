@@ -13,11 +13,14 @@ interface AccountRepository {
 
     suspend fun login(email: String, password: String): Result<LoginResponse>
 
-    suspend fun getMe(email: String, password: String): Result<UserResponse>
+    suspend fun getMe(): Result<UserResponse>
 
     suspend fun updateMe(
         name: String,
         surname: String,
         email: String
     ): Result<UserResponse>
+
+    suspend fun clearSession()
+    fun checkAuth(): Boolean
 }

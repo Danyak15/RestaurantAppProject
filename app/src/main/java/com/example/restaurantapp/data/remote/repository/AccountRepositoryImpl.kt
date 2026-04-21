@@ -1,16 +1,22 @@
 package com.example.restaurantapp.data.remote.repository
 
 import com.example.restaurantapp.data.local.auth.SessionManager
+import com.example.restaurantapp.data.local.dao.UserDao
+import com.example.restaurantapp.data.local.mapper.toEntity
+import com.example.restaurantapp.data.local.mapper.toResponse
 import com.example.restaurantapp.data.remote.api.AccountApi
 import com.example.restaurantapp.data.remote.dto.request.LoginRequest
 import com.example.restaurantapp.data.remote.dto.response.LoginResponse
 import com.example.restaurantapp.data.remote.dto.request.RegisterRequest
 import com.example.restaurantapp.data.remote.dto.response.UserResponse
 import com.example.restaurantapp.data.remote.dto.request.UpdateUserRequest
+import com.example.restaurantapp.data.utils.NetworkHelper
 import com.example.restaurantapp.domain.repository.AccountRepository
 
 class AccountRepositoryImpl(
+    private val userDao: UserDao,
     private val accountApi: AccountApi,
+    private val networkHelper: NetworkHelper,
     private val sessionManager: SessionManager
 ) : AccountRepository {
     override suspend fun register(
@@ -20,16 +26,19 @@ class AccountRepositoryImpl(
         password: String
     ): Result<Unit> {
         return try {
+            networkHelper.checkInternetConnection()
+
             val response = accountApi.register(
                 RegisterRequest(
-                name = name,
-                surname = surname,
-                email = email,
-                password = password
+                    name = name,
+                    surname = surname,
+                    email = email,
+                    password = password
                 )
             )
 
             if (response.isSuccessful) {
+                sessionManager.saveCredentials(email, password)
                 Result.success(Unit)
             } else {
                 Result.failure(Exception("Registration failed: ${response.code()}"))
@@ -41,6 +50,8 @@ class AccountRepositoryImpl(
 
     override suspend fun login(email: String, password: String): Result<LoginResponse> {
         return try {
+            networkHelper.checkInternetConnection()
+
             val response = accountApi.login(
                 LoginRequest(
                     email = email,
@@ -49,6 +60,7 @@ class AccountRepositoryImpl(
             )
 
             if (response.isSuccessful && response.body() != null) {
+                sessionManager.saveCredentials(email, password)
                 Result.success(response.body()!!)
             } else {
                 Result.failure(Exception("Login failed: ${response.code()}"))
@@ -58,18 +70,38 @@ class AccountRepositoryImpl(
         }
     }
 
-    override suspend fun getMe(email: String, password: String): Result<UserResponse> {
+    override suspend fun getMe(): Result<UserResponse> {
+        val email = sessionManager.getEmail()
+            ?: return Result.failure(Exception("Пользователь не авторизован"))
+        val password = sessionManager.getPassword()
+            ?: return Result.failure(Exception("Пользователь не авторизован"))
+
         return try {
+            networkHelper.checkInternetConnection()
+
             val authHeader = okhttp3.Credentials.basic(email, password)
             val response = accountApi.getMe(authHeader)
 
             if (response.isSuccessful && response.body() != null) {
+                userDao.saveUser(response.body()!!.toEntity())
                 Result.success(response.body()!!)
             } else {
-                Result.failure(Exception("Get me failed: ${response.code()}"))
+                val user = userDao.getUser(email)
+
+                if (user != null) {
+                    Result.success(user.toResponse())
+                } else {
+                    Result.failure(Exception("Get me failed: ${response.code()}"))
+                }
             }
         } catch (e: Exception) {
-            Result.failure(e)
+            val user = userDao.getUser(email)
+
+            if (user != null) {
+                Result.success(user.toResponse())
+            } else {
+                Result.failure(e)
+            }
         }
     }
 
@@ -78,11 +110,15 @@ class AccountRepositoryImpl(
         surname: String,
         email: String
     ): Result<UserResponse> {
-        return try {
-            val email = sessionManager.getEmail() ?: ""
-            val password = sessionManager.getPassword() ?: ""
+        val currentEmail = sessionManager.getEmail()
+            ?: return Result.failure(Exception("Пользователь не авторизован"))
+        val password = sessionManager.getPassword()
+            ?: return Result.failure(Exception("Пользователь не авторизован"))
 
-            val authHeader = okhttp3.Credentials.basic(email, password)
+        return try {
+            networkHelper.checkInternetConnection()
+
+            val authHeader = okhttp3.Credentials.basic(currentEmail, password)
             val response = accountApi.updateMe(
                 authHeader = authHeader,
                 request = UpdateUserRequest(
@@ -93,6 +129,8 @@ class AccountRepositoryImpl(
             )
 
             if (response.isSuccessful && response.body() != null) {
+                sessionManager.saveCredentials(email, password)
+                userDao.saveUser(response.body()!!.toEntity())
                 Result.success(response.body()!!)
             } else {
                 Result.failure(Exception("Update failed: ${response.code()}"))
@@ -101,4 +139,12 @@ class AccountRepositoryImpl(
             Result.failure(e)
         }
     }
+
+    override suspend fun clearSession() {
+        val email = sessionManager.getEmail() ?: return
+        sessionManager.clearSession()
+        userDao.deleteUser(email)
+    }
+
+    override fun checkAuth(): Boolean = sessionManager.isAuthorized()
 }

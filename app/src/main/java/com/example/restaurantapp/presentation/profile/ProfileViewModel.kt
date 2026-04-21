@@ -4,14 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.restaurantapp.data.local.auth.SessionManager
 import com.example.restaurantapp.data.remote.dto.response.UserResponse
 import com.example.restaurantapp.domain.repository.AccountRepository
 import kotlinx.coroutines.launch
 
 class ProfileViewModel(
-    private val accountRepository: AccountRepository,
-    private val sessionManager: SessionManager
+    private val accountRepository: AccountRepository
 ) : ViewModel() {
     private val _user = MutableLiveData<UserResponse?>()
     val user: LiveData<UserResponse?> = _user
@@ -24,16 +22,8 @@ class ProfileViewModel(
 
 
     fun getMe() {
-        val email = sessionManager.getEmail()
-        val password = sessionManager.getPassword()
-
-        if (email.isNullOrBlank() || password.isNullOrBlank()) {
-            _toastMessage.value = "Пользователь не авторизован"
-            return
-        }
-
         viewModelScope.launch {
-            val result = accountRepository.getMe(email, password)
+            val result = accountRepository.getMe()
 
             result.onSuccess { userResponse ->
                 _user.value = userResponse
@@ -44,13 +34,6 @@ class ProfileViewModel(
     }
 
     fun updateMe(name: String, surname: String, email: String) {
-        val password = sessionManager.getPassword()
-
-        if (password.isNullOrBlank()) {
-            _toastMessage.value = "Пользователь не авторизован"
-            return
-        }
-
         if (name.isBlank() || surname.isBlank() || email.isBlank()) {
             _toastMessage.value = "Заполните пустые поля"
             return
@@ -61,7 +44,6 @@ class ProfileViewModel(
 
             result.onSuccess { user ->
                 _user.value = user
-                sessionManager.saveCredentials(user.email, password)
                 _isUpdateSuccess.value = true
             }.onFailure { error ->
                 _toastMessage.value = error.message ?: "Не удалось обновить профиль"
@@ -69,9 +51,13 @@ class ProfileViewModel(
         }
     }
 
-    fun checkAuth() = sessionManager.isAuthorized()
+    fun checkAuth() = accountRepository.checkAuth()
 
-    fun clearSession() = sessionManager.clearSession()
+    fun clearSession() {
+        viewModelScope.launch {
+            accountRepository.clearSession()
+        }
+    }
 
     fun clearError() {
         _toastMessage.value = null

@@ -9,6 +9,7 @@ import com.example.restaurantapp.data.remote.repository.AccountRepositoryImpl
 import com.example.restaurantapp.data.repository.CategoriesRepositoryImpl
 import com.example.restaurantapp.data.repository.DishesRepositoryImpl
 import com.example.restaurantapp.data.repository.RestaurantsRepositoryImpl
+import com.example.restaurantapp.data.utils.NetworkHelper
 import com.example.restaurantapp.domain.repository.CategoriesRepository
 import com.example.restaurantapp.domain.repository.DishesRepository
 import com.example.restaurantapp.domain.repository.RestaurantsRepository
@@ -20,8 +21,15 @@ class AppContainer(context: Context) {
         "restaurants_app.db"
     ).build()
 
+    val networkHelper = NetworkHelper(context)
+
     val sessionManager = SessionManager(context)
-    val accountRepository = AccountRepositoryImpl(NetworkModule.accountApi, sessionManager)
+    val accountRepository = AccountRepositoryImpl(
+        userDao = database.userDao(),
+        accountApi = NetworkModule.accountApi,
+        networkHelper = networkHelper,
+        sessionManager = sessionManager
+    )
 
     val restaurantsRepository: RestaurantsRepository =
         RestaurantsRepositoryImpl(database.restaurantDao())
