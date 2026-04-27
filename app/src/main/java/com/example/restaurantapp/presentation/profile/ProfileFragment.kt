@@ -51,6 +51,10 @@ class ProfileFragment : Fragment() {
         binding.btnChange.setOnClickListener {
             findNavController().navigate(R.id.action_profileFragment_to_personInfoFragment)
         }
+
+        binding.btnFavorite.setOnClickListener {
+            findNavController().navigate(R.id.action_profileFragment_to_favoriteDishesFragment)
+        }
     }
 
     private fun observeViewModel() {

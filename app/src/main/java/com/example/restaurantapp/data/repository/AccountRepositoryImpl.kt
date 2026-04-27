@@ -1,4 +1,4 @@
-package com.example.restaurantapp.data.remote.repository
+package com.example.restaurantapp.data.repository
 
 import com.example.restaurantapp.data.local.auth.SessionManager
 import com.example.restaurantapp.data.local.dao.UserDao
@@ -6,12 +6,13 @@ import com.example.restaurantapp.data.local.mapper.toEntity
 import com.example.restaurantapp.data.local.mapper.toResponse
 import com.example.restaurantapp.data.remote.api.AccountApi
 import com.example.restaurantapp.data.remote.dto.request.LoginRequest
-import com.example.restaurantapp.data.remote.dto.response.LoginResponse
 import com.example.restaurantapp.data.remote.dto.request.RegisterRequest
-import com.example.restaurantapp.data.remote.dto.response.UserResponse
 import com.example.restaurantapp.data.remote.dto.request.UpdateUserRequest
+import com.example.restaurantapp.data.remote.dto.response.LoginResponse
+import com.example.restaurantapp.data.remote.dto.response.UserResponse
 import com.example.restaurantapp.data.utils.NetworkHelper
 import com.example.restaurantapp.domain.repository.AccountRepository
+import okhttp3.Credentials
 
 class AccountRepositoryImpl(
     private val userDao: UserDao,
@@ -79,7 +80,7 @@ class AccountRepositoryImpl(
         return try {
             networkHelper.checkInternetConnection()
 
-            val authHeader = okhttp3.Credentials.basic(email, password)
+            val authHeader = Credentials.basic(email, password)
             val response = accountApi.getMe(authHeader)
 
             if (response.isSuccessful && response.body() != null) {
@@ -118,7 +119,7 @@ class AccountRepositoryImpl(
         return try {
             networkHelper.checkInternetConnection()
 
-            val authHeader = okhttp3.Credentials.basic(currentEmail, password)
+            val authHeader = Credentials.basic(currentEmail, password)
             val response = accountApi.updateMe(
                 authHeader = authHeader,
                 request = UpdateUserRequest(

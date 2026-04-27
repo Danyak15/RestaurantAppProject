@@ -16,11 +16,13 @@ class DishesRepositoryImpl(
         }
     }
 
-    override suspend fun getDishById(id: Int): Dish? {
-        return dishDao.getDishById(id)?.toDomain()
+    override fun observeDishesByIds(ids: List<Int>): Flow<List<Dish>> {
+        return dishDao.observeDishesByIds(ids).map { list ->
+            list.map { it.toDomain() }
+        }
     }
 
-    override suspend fun updateFavoriteStatus(id: Int, isFavorite: Boolean) {
-        dishDao.updateFavoriteStatus(id, isFavorite)
+    override suspend fun getDishById(id: Int): Dish? {
+        return dishDao.getDishById(id)?.toDomain()
     }
 }

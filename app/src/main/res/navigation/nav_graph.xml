@@ -33,6 +33,9 @@
         <action
             android:id="@+id/action_profileFragment_to_personInfoFragment"
             app:destination="@id/personInfoFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_favoriteDishesFragment"
+            app:destination="@id/favoriteDishesFragment" />
     </fragment>
     <fragment
         android:id="@+id/restaurantDetailsFragment"
@@ -117,6 +120,15 @@
         android:name="com.example.restaurantapp.presentation.profile.PersonInfoFragment"
         android:label="Мои данные"
         tools:layout="@layout/fragment_person_info" />
+    <fragment
+        android:id="@+id/favoriteDishesFragment"
+        android:name="com.example.restaurantapp.presentation.favorite.FavoriteDishesFragment"
+        android:label="Избранное"
+        tools:layout="@layout/fragment_favorite_dishes" >
+        <action
+            android:id="@+id/action_favoriteDishesFragment_to_dishDetailsFragment"
+            app:destination="@id/dishDetailsFragment" />
+    </fragment>
 
 
 </navigation>

@@ -5,6 +5,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface DishesRepository {
     fun getDishesByCategoryId(categoryId: Int): Flow<List<Dish>>
+    fun observeDishesByIds(ids: List<Int>): Flow<List<Dish>>
     suspend fun getDishById(id: Int): Dish?
-    suspend fun updateFavoriteStatus(id: Int, isFavorite: Boolean)
 }

@@ -4,20 +4,28 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
 import com.example.restaurantapp.RestaurantApplication
 import com.example.restaurantapp.databinding.FragmentDishDetailsBinding
-
+import kotlinx.coroutines.launch
 
 class DishDetailsFragment : Fragment() {
     private var _binding: FragmentDishDetailsBinding? = null
     private val binding get() = _binding!!
     private val args: DishDetailsFragmentArgs by navArgs()
+
     private val viewModel: DishDetailsViewModel by viewModels {
         val appContainer = (requireActivity().application as RestaurantApplication).appContainer
-        DishDetailsViewModelFactory(appContainer.dishesRepository)
+        DishDetailsViewModelFactory(
+            appContainer.dishesRepository,
+            appContainer.favoriteDishRepository
+        )
     }
 
     override fun onCreateView(
@@ -33,10 +41,22 @@ class DishDetailsFragment : Fragment() {
 
         val dishId = args.dishId
 
-        viewModel.dish.observe(viewLifecycleOwner) { dish ->
-            binding.dish = dish
-            binding.btnFavorite.isSelected = dish.isFavorite
-            binding.executePendingBindings()
+        binding.btnFavorite.isVisible = viewModel.isFavoriteVisible
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.dish.collect { dish ->
+                        binding.dish = dish
+                        binding.executePendingBindings()
+                    }
+                }
+                launch {
+                    viewModel.isFavorite.collect { isFavorite ->
+                        binding.btnFavorite.isSelected = isFavorite
+                    }
+                }
+            }
         }
 
         viewModel.loadDishDetails(dishId)

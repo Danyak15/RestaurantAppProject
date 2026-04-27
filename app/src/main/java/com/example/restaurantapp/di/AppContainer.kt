@@ -5,13 +5,16 @@ import androidx.room.Room
 import com.example.restaurantapp.data.local.AppDatabase
 import com.example.restaurantapp.data.local.DatabaseSeeder
 import com.example.restaurantapp.data.local.auth.SessionManager
-import com.example.restaurantapp.data.remote.repository.AccountRepositoryImpl
+import com.example.restaurantapp.data.repository.AccountRepositoryImpl
 import com.example.restaurantapp.data.repository.CategoriesRepositoryImpl
 import com.example.restaurantapp.data.repository.DishesRepositoryImpl
+import com.example.restaurantapp.data.repository.FavoriteDishRepositoryImpl
 import com.example.restaurantapp.data.repository.RestaurantsRepositoryImpl
 import com.example.restaurantapp.data.utils.NetworkHelper
+import com.example.restaurantapp.domain.repository.AccountRepository
 import com.example.restaurantapp.domain.repository.CategoriesRepository
 import com.example.restaurantapp.domain.repository.DishesRepository
+import com.example.restaurantapp.domain.repository.FavoriteDishRepository
 import com.example.restaurantapp.domain.repository.RestaurantsRepository
 
 class AppContainer(context: Context) {
@@ -24,7 +27,7 @@ class AppContainer(context: Context) {
     val networkHelper = NetworkHelper(context)
 
     val sessionManager = SessionManager(context)
-    val accountRepository = AccountRepositoryImpl(
+    val accountRepository: AccountRepository = AccountRepositoryImpl(
         userDao = database.userDao(),
         accountApi = NetworkModule.accountApi,
         networkHelper = networkHelper,
@@ -39,6 +42,11 @@ class AppContainer(context: Context) {
 
     val dishesRepository: DishesRepository =
         DishesRepositoryImpl(database.dishDao())
+
+    val favoriteDishRepository: FavoriteDishRepository = FavoriteDishRepositoryImpl(
+        favoriteDishDao = database.favoriteDishDao(),
+        sessionManager = sessionManager
+    )
 
     val databaseSeeder = DatabaseSeeder(
         restaurantDao = database.restaurantDao(),

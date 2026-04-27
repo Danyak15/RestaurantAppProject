@@ -1,32 +1,55 @@
 package com.example.restaurantapp.presentation.menu
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.restaurantapp.domain.model.Dish
 import com.example.restaurantapp.domain.repository.DishesRepository
+import com.example.restaurantapp.domain.repository.FavoriteDishRepository
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class DishDetailsViewModel(
-    private val repository: DishesRepository
+    private val dishesRepository: DishesRepository,
+    private val favoriteDishRepository: FavoriteDishRepository
 ) : ViewModel() {
-    private val _dish = MutableLiveData<Dish>()
-    val dish: LiveData<Dish> = _dish
+    private val _dish = MutableStateFlow<Dish?>(null)
+    val dish: StateFlow<Dish?> = _dish
+
+    private val _isFavorite = MutableStateFlow(false)
+    val isFavorite: StateFlow<Boolean> = _isFavorite
+
+    val isFavoriteVisible: Boolean = favoriteDishRepository.isAuthorized()
+
+    private var favoriteJob: Job? = null
 
     fun loadDishDetails(dishId: Int) {
         viewModelScope.launch {
-            _dish.value = repository.getDishById(dishId)
+            _dish.value = dishesRepository.getDishById(dishId)
+
+            favoriteJob?.cancel()
+
+            favoriteJob = favoriteDishRepository.observeIsFavorite(dishId)
+                .onEach { favorite ->
+                    _isFavorite.value = favorite
+                }
+                .launchIn(this)
         }
     }
 
     fun toggleFavorite() {
-        val currentDish = _dish.value ?: return
-        val newValue = !currentDish.isFavorite
+        val dishId = _dish.value?.id ?: return
+        val currentlyFavorite = _isFavorite.value
 
         viewModelScope.launch {
-            repository.updateFavoriteStatus(currentDish.id, newValue)
-            _dish.value = currentDish.copy(isFavorite = newValue)
+            if (currentlyFavorite) {
+                favoriteDishRepository.removeFromFavorites(dishId)
+            } else {
+                favoriteDishRepository.addToFavorites(dishId)
+            }
         }
     }
 }
