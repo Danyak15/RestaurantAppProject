@@ -16,7 +16,10 @@ class PersonInfoFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: ProfileViewModel by viewModels {
         val appContainer = (requireActivity().application as RestaurantApplication).appContainer
-        ProfileViewModelFactory(appContainer.accountRepository)
+        ProfileViewModelFactory(
+            appContainer.accountRepository,
+            appContainer.favoriteDishRepository
+        )
     }
 
     override fun onCreateView(

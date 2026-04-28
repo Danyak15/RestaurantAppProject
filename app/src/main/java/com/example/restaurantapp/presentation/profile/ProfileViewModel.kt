@@ -6,10 +6,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.restaurantapp.data.remote.dto.response.UserResponse
 import com.example.restaurantapp.domain.repository.AccountRepository
+import com.example.restaurantapp.domain.repository.FavoriteDishRepository
 import kotlinx.coroutines.launch
 
 class ProfileViewModel(
-    private val accountRepository: AccountRepository
+    private val accountRepository: AccountRepository,
+    private val favoriteRepository: FavoriteDishRepository
 ) : ViewModel() {
     private val _user = MutableLiveData<UserResponse?>()
     val user: LiveData<UserResponse?> = _user
@@ -55,6 +57,7 @@ class ProfileViewModel(
 
     fun clearSession() {
         viewModelScope.launch {
+            favoriteRepository.clearFavorites()
             accountRepository.clearSession()
         }
     }

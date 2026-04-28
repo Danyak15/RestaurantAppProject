@@ -1,6 +1,7 @@
 package com.example.restaurantapp.di
 
 import com.example.restaurantapp.data.remote.api.AccountApi
+import com.example.restaurantapp.data.remote.api.FavoriteApi
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -25,4 +26,5 @@ object NetworkModule {
         .build()
 
     val accountApi: AccountApi = retrofit.create(AccountApi::class.java)
+    val favoriteApi: FavoriteApi = retrofit.create(FavoriteApi::class.java)
 }

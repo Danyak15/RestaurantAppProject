@@ -69,6 +69,7 @@ class FavoriteDishesFragment : Fragment() {
                 viewModel.favoriteDishes.collect { dishes ->
                     dishesAdapter.submitList(dishes)
                     binding.tvNoFavorites.isVisible = dishes.isEmpty()
+                    binding.spinnerRestaurants.isVisible = dishes.isNotEmpty()
                 }
             }
         }

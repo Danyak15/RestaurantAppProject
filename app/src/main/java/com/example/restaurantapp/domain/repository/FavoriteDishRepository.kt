@@ -8,5 +8,8 @@ interface FavoriteDishRepository {
     fun observeFavoriteDishIds(): Flow<List<Int>>
     suspend fun addToFavorites(dishId: Int): Result<Unit>
     suspend fun removeFromFavorites(dishId: Int): Result<Unit>
+    suspend fun pushFavorites(): Result<Unit>
+    suspend fun pullFavorites(): Result<Unit>
+    suspend fun syncFavorites(): Result<Unit>
     suspend fun clearFavorites(): Result<Unit>
 }

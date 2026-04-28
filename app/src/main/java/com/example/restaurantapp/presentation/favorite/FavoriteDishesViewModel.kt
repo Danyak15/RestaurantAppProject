@@ -15,12 +15,18 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 class FavoriteDishesViewModel(
     private val restaurantsRepository: RestaurantsRepository,
     private val dishesRepository: DishesRepository,
     private val favoriteRepository: FavoriteDishRepository
 ) : ViewModel() {
+
+    init {
+        syncFavorites()
+    }
+
     private val selectedRestaurantId = MutableStateFlow<Int?>(null)
 
     private val restaurants: StateFlow<List<Restaurant>> =
@@ -77,6 +83,12 @@ class FavoriteDishesViewModel(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
         )
+
+    private fun syncFavorites() {
+        viewModelScope.launch {
+            favoriteRepository.syncFavorites()
+        }
+    }
 
     fun selectRestaurant(restaurantId: Int?) {
         selectedRestaurantId.value = restaurantId
