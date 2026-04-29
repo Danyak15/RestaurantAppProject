@@ -30,9 +30,11 @@ class AppContainer(context: Context) {
     val favoriteSyncScheduler = FavoriteSyncScheduler(context)
 
     val sessionManager = SessionManager(context)
+    val networkModule = NetworkModule(sessionManager)
+
     val accountRepository: AccountRepository = AccountRepositoryImpl(
         userDao = database.userDao(),
-        accountApi = NetworkModule.accountApi,
+        accountApi = networkModule.accountApi,
         networkHelper = networkHelper,
         sessionManager = sessionManager
     )
@@ -49,7 +51,7 @@ class AppContainer(context: Context) {
     val favoriteDishRepository: FavoriteDishRepository = FavoriteDishRepositoryImpl(
         favoriteDishDao = database.favoriteDishDao(),
         favoriteSyncDao = database.favoriteSyncDao(),
-        favoriteApi = NetworkModule.favoriteApi,
+        favoriteApi = networkModule.favoriteApi,
         sessionManager = sessionManager,
         networkHelper = networkHelper,
         favoriteSyncScheduler = favoriteSyncScheduler,

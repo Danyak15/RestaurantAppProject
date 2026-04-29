@@ -12,7 +12,6 @@ import com.example.restaurantapp.data.remote.dto.response.LoginResponse
 import com.example.restaurantapp.data.remote.dto.response.UserResponse
 import com.example.restaurantapp.data.utils.NetworkHelper
 import com.example.restaurantapp.domain.repository.AccountRepository
-import okhttp3.Credentials
 
 class AccountRepositoryImpl(
     private val userDao: UserDao,
@@ -74,14 +73,11 @@ class AccountRepositoryImpl(
     override suspend fun getMe(): Result<UserResponse> {
         val email = sessionManager.getEmail()
             ?: return Result.failure(Exception("Пользователь не авторизован"))
-        val password = sessionManager.getPassword()
-            ?: return Result.failure(Exception("Пользователь не авторизован"))
 
         return try {
             networkHelper.checkInternetConnection()
 
-            val authHeader = Credentials.basic(email, password)
-            val response = accountApi.getMe(authHeader)
+            val response = accountApi.getMe()
 
             if (response.isSuccessful && response.body() != null) {
                 userDao.saveUser(response.body()!!.toEntity())
@@ -111,17 +107,13 @@ class AccountRepositoryImpl(
         surname: String,
         email: String
     ): Result<UserResponse> {
-        val currentEmail = sessionManager.getEmail()
-            ?: return Result.failure(Exception("Пользователь не авторизован"))
         val password = sessionManager.getPassword()
             ?: return Result.failure(Exception("Пользователь не авторизован"))
 
         return try {
             networkHelper.checkInternetConnection()
 
-            val authHeader = Credentials.basic(currentEmail, password)
             val response = accountApi.updateMe(
-                authHeader = authHeader,
                 request = UpdateUserRequest(
                     name = name,
                     surname = surname,

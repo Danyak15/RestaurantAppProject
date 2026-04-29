@@ -11,7 +11,6 @@ import com.example.restaurantapp.data.worker.FavoriteSyncScheduler
 import com.example.restaurantapp.domain.repository.FavoriteDishRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
-import okhttp3.Credentials
 
 class FavoriteDishRepositoryImpl(
     private val favoriteDishDao: FavoriteDishDao,
@@ -56,8 +55,6 @@ class FavoriteDishRepositoryImpl(
                     action = "ADD"
                 )
             )
-
-            favoriteSyncScheduler.schedule()
         }
 
         return trySyncItem(dishId, "ADD")
@@ -81,8 +78,6 @@ class FavoriteDishRepositoryImpl(
                     action = "REMOVE"
                 )
             )
-
-            favoriteSyncScheduler.schedule()
         }
 
         return trySyncItem(dishId, "REMOVE")
@@ -92,16 +87,12 @@ class FavoriteDishRepositoryImpl(
         val email = sessionManager.getEmail()
             ?: return Result.failure(Exception("Пользователь не авторизован"))
 
-        val password = sessionManager.getPassword()
-            ?: return Result.failure(Exception("Пользователь не авторизован"))
-
         return try {
             networkHelper.checkInternetConnection()
-            val authHeader = Credentials.basic(email, password)
 
             val response = when (action) {
-                "ADD" -> favoriteApi.addToFavorites(authHeader, dishId)
-                "REMOVE" -> favoriteApi.removeFromFavorites(authHeader, dishId)
+                "ADD" -> favoriteApi.addToFavorites(dishId)
+                "REMOVE" -> favoriteApi.removeFromFavorites(dishId)
                 else -> return Result.failure(Exception("Неизвестная команда"))
             }
 
@@ -122,20 +113,16 @@ class FavoriteDishRepositoryImpl(
         val email = sessionManager.getEmail()
             ?: return Result.failure(Exception("Пользователь не авторизован"))
 
-        val password = sessionManager.getPassword()
-            ?: return Result.failure(Exception("Пользователь не авторизован"))
-
         return try {
             networkHelper.checkInternetConnection()
 
-            val authHeader = Credentials.basic(email, password)
             val tasks = favoriteSyncDao.getTasks(email)
             var allSuccessful = true
 
             tasks.forEach { task ->
                 val response = when (task.action) {
-                    "ADD" -> favoriteApi.addToFavorites(authHeader, task.dishId)
-                    "REMOVE" -> favoriteApi.removeFromFavorites(authHeader, task.dishId)
+                    "ADD" -> favoriteApi.addToFavorites(task.dishId)
+                    "REMOVE" -> favoriteApi.removeFromFavorites(task.dishId)
                     else -> null
                 }
 
@@ -149,9 +136,11 @@ class FavoriteDishRepositoryImpl(
             if (allSuccessful) {
                 Result.success(Unit)
             } else {
+                favoriteSyncScheduler.schedule()
                 Result.failure(Exception("Не все изменения были обработаны"))
             }
         } catch (e: Exception) {
+            favoriteSyncScheduler.schedule()
             Result.failure(e)
         }
     }
@@ -160,28 +149,14 @@ class FavoriteDishRepositoryImpl(
         val email = sessionManager.getEmail()
             ?: return Result.failure(Exception("Пользователь не авторизован"))
 
-        val password = sessionManager.getPassword()
-            ?: return Result.failure(Exception("Пользователь не авторизован"))
-
         return try {
             networkHelper.checkInternetConnection()
 
-            val authHeader = Credentials.basic(email, password)
-            val response = favoriteApi.getFavoriteDishes(authHeader)
+            val response = favoriteApi.getFavoriteDishes()
 
             if (response.isSuccessful && response.body() != null)  {
                 val favoriteIds = response.body()!!
-
-                favoriteDishDao.clearFavorites(email)
-
-                favoriteIds.forEach { id ->
-                    favoriteDishDao.addToFavorites(
-                        FavoriteDishEntity(
-                            userEmail = email,
-                            dishId = id
-                        )
-                    )
-                }
+                favoriteDishDao.updateFavoriteDishes(email, favoriteIds)
 
                 Result.success(Unit)
             } else {

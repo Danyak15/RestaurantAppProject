@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import com.example.restaurantapp.data.local.entity.FavoriteDishEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -23,4 +24,18 @@ interface FavoriteDishDao {
 
     @Query("DELETE FROM favorite_dishes WHERE userEmail = :userEmail")
     suspend fun clearFavorites(userEmail: String)
+
+    @Transaction
+    suspend fun updateFavoriteDishes(email: String, favoriteIds: List<Int>) {
+        clearFavorites(email)
+
+        favoriteIds.forEach { id ->
+            addToFavorites(
+                FavoriteDishEntity(
+                    userEmail = email,
+                    dishId = id
+                )
+            )
+        }
+    }
 }

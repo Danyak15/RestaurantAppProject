@@ -10,7 +10,7 @@ import com.example.restaurantapp.domain.model.Dish
 
 class DishesAdapter(
     private val onItemClick: (Dish) -> Unit
-) : ListAdapter<Dish, DishesAdapter.DishViewHolder>(diffCallback){
+) : ListAdapter<Dish, DishesAdapter.DishViewHolder>(diffCallback) {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
