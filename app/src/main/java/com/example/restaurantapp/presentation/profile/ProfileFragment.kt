@@ -57,6 +57,10 @@ class ProfileFragment : Fragment() {
         binding.btnFavorite.setOnClickListener {
             findNavController().navigate(R.id.action_profileFragment_to_favoriteDishesFragment)
         }
+
+        binding.btnReservations.setOnClickListener {
+            findNavController().navigate(R.id.action_profileFragment_to_myReservationsFragment)
+        }
     }
 
     private fun observeViewModel() {

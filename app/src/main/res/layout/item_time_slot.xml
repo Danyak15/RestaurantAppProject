@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="timeSlot"
+            type="com.example.restaurantapp.presentation.reservation.TimeSlotModel" />
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="0dp"
+        app:strokeWidth="1dp"
+        app:strokeColor="@{timeSlot.isSelected ? @color/orange : @color/light_gray}">
+
+        <TextView
+            android:id="@+id/tv_time_slot"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:text="@{timeSlot.time.toString()}"
+            tools:text="12:00"
+            android:textColor="@{timeSlot.isSelected ? @color/black : @color/black}"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:background="@{timeSlot.isSelected ? @color/yellow : @color/white}" />
+
+    </com.google.android.material.card.MaterialCardView>
+</layout>

@@ -1,0 +1,163 @@
+package com.example.restaurantapp.presentation.reservation
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.restaurantapp.domain.model.Restaurant
+import com.example.restaurantapp.domain.repository.ReservationRepository
+import com.example.restaurantapp.domain.repository.RestaurantsRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.LocalTime
+
+class ReservationViewModel(
+    private val reservationRepository: ReservationRepository,
+    private val restaurantRepository: RestaurantsRepository
+) : ViewModel() {
+    private val _restaurant = MutableStateFlow<Restaurant?>(null)
+    val restaurant = _restaurant.asStateFlow()
+
+    private val _guests = MutableStateFlow(1)
+    val guests = _guests.asStateFlow()
+
+    private val _dateSlots = MutableStateFlow<List<DateSlotModel>>(emptyList())
+    val dateSlots = _dateSlots.asStateFlow()
+
+    private val _timeSlots = MutableStateFlow<List<TimeSlotModel>>(emptyList())
+    val timeSlots = _timeSlots.asStateFlow()
+
+    private val _message = MutableStateFlow<String?>(null)
+    val message = _message.asStateFlow()
+
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
+
+    private val selectedDate = MutableStateFlow<LocalDate?>(null)
+    private val selectedTime = MutableStateFlow<LocalTime?>(null)
+
+    val isReady = combine(selectedDate, selectedTime) { date, time ->
+        date != null && time != null
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = false
+    )
+
+    init {
+        generateDateSlots()
+    }
+
+    fun loadRestaurant(id: Int) {
+        viewModelScope.launch {
+            _restaurant.value = restaurantRepository.getRestaurantById(id)
+
+            selectedDate.value?.let { date ->
+                loadTimeSlots(date)
+            }
+        }
+    }
+
+    fun selectDate(slot: DateSlotModel) {
+        selectedDate.value = slot.date
+
+        _dateSlots.value = _dateSlots.value.map {
+            it.copy(isSelected = it.date == slot.date)
+        }
+
+        selectedTime.value = null
+        loadTimeSlots(slot.date)
+    }
+
+    fun selectTime(slot: TimeSlotModel) {
+        selectedTime.value = slot.time
+        _timeSlots.value = _timeSlots.value.map {
+            it.copy(isSelected = it.time == slot.time)
+        }
+    }
+
+    fun incrementGuests() {
+        if (_guests.value < 8) {
+            _guests.value++
+            selectedDate.value?.let { loadTimeSlots(it) }
+        }
+    }
+
+    fun decrementGuests() {
+        if (_guests.value > 1) {
+            _guests.value--
+            selectedDate.value?.let { loadTimeSlots(it) }
+        }
+    }
+
+    fun createReservation() {
+        val guests = guests.value
+        val date = selectedDate.value ?: return
+        val time = selectedTime.value ?: return
+        val restaurantId = restaurant.value?.id ?: return
+
+        val dateTimeString = date.atTime(time).toString()
+
+        viewModelScope.launch {
+            _isLoading.value = true
+
+            val result = reservationRepository.createReservation(
+                restaurantId = restaurantId,
+                dateTime = dateTimeString,
+                guests = guests
+            )
+
+            result.onSuccess {
+                _message.value = "Стол успешно забронирован"
+            }.onFailure { error ->
+                _message.value = error.message ?: "Ошибка бронирования"
+            }
+
+            _isLoading.value = false
+        }
+    }
+
+    fun clearMessage() {
+        _message.value = null
+    }
+
+    private fun generateDateSlots() {
+        val today = LocalDate.now()
+        val dates = (0..60).map {
+            DateSlotModel(
+                date = today.plusDays(it.toLong()),
+                isSelected = it == 0
+            )
+        }
+        _dateSlots.value = dates
+        selectedDate.value = today
+    }
+
+    private fun loadTimeSlots(date: LocalDate) {
+        val restaurantId = restaurant.value?.id ?: return
+        val guestsCount = guests.value
+
+        viewModelScope.launch {
+            val result = reservationRepository.getAvailableTimes(
+                restaurantId = restaurantId,
+                date = date.toString(),
+                guests = guestsCount
+            )
+
+            result.onSuccess { times ->
+                _timeSlots.value = times.map { time ->
+                    TimeSlotModel(
+                        time = LocalTime.parse(time)
+                    )
+                }
+                selectedTime.value = null
+            }.onFailure {
+                _timeSlots.value = emptyList()
+                selectedTime.value = null
+            }
+        }
+    }
+}

@@ -3,6 +3,7 @@ package com.example.restaurantapp.di
 import com.example.restaurantapp.data.local.auth.SessionManager
 import com.example.restaurantapp.data.remote.api.AccountApi
 import com.example.restaurantapp.data.remote.api.FavoriteApi
+import com.example.restaurantapp.data.remote.api.ReservationApi
 import okhttp3.Credentials
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -47,9 +48,10 @@ class NetworkModule(
 
     val accountApi: AccountApi = retrofit.create(AccountApi::class.java)
     val favoriteApi: FavoriteApi = retrofit.create(FavoriteApi::class.java)
+    val reservationApi: ReservationApi = retrofit.create(ReservationApi::class.java)
 
     companion object {
         private const val BASE_URL = "http://10.0.2.2:8080/"
-//        private const val BASE_URL = "http://192.168.0.101:8080/"
+//        private const val BASE_URL = "http://192.168.0.106:8080/"
     }
 }

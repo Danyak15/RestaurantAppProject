@@ -9,6 +9,7 @@ import com.example.restaurantapp.data.repository.AccountRepositoryImpl
 import com.example.restaurantapp.data.repository.CategoriesRepositoryImpl
 import com.example.restaurantapp.data.repository.DishesRepositoryImpl
 import com.example.restaurantapp.data.repository.FavoriteDishRepositoryImpl
+import com.example.restaurantapp.data.repository.ReservationRepositoryImpl
 import com.example.restaurantapp.data.repository.RestaurantsRepositoryImpl
 import com.example.restaurantapp.data.utils.NetworkHelper
 import com.example.restaurantapp.data.worker.FavoriteSyncScheduler
@@ -16,6 +17,7 @@ import com.example.restaurantapp.domain.repository.AccountRepository
 import com.example.restaurantapp.domain.repository.CategoriesRepository
 import com.example.restaurantapp.domain.repository.DishesRepository
 import com.example.restaurantapp.domain.repository.FavoriteDishRepository
+import com.example.restaurantapp.domain.repository.ReservationRepository
 import com.example.restaurantapp.domain.repository.RestaurantsRepository
 
 class AppContainer(context: Context) {
@@ -55,6 +57,11 @@ class AppContainer(context: Context) {
         sessionManager = sessionManager,
         networkHelper = networkHelper,
         favoriteSyncScheduler = favoriteSyncScheduler,
+    )
+
+    val reservationRepository: ReservationRepository = ReservationRepositoryImpl(
+        reservationApi = networkModule.reservationApi,
+        networkHelper = networkHelper
     )
 
     val databaseSeeder = DatabaseSeeder(

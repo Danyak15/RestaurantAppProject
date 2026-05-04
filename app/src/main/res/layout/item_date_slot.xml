@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="dateSlot"
+            type="com.example.restaurantapp.presentation.reservation.DateSlotModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="56dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingVertical="8dp">
+
+        <TextView
+            android:id="@+id/tv_day_of_week"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{dateSlot.dayOfWeekName}"
+            android:textColor="@{dateSlot.isWeekend ? @color/red : @color/black}"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            tools:text="Пт" />
+
+        <TextView
+            android:id="@+id/tv_date_number"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="4dp"
+            android:gravity="center"
+            android:text="@{dateSlot.dayOfMonth}"
+            android:textColor="@{dateSlot.isSelected ? @color/white : @color/black}"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:background="@{dateSlot.isSelected ? @drawable/bg_circle_yellow : null}"
+            tools:text="15" />
+
+    </LinearLayout>
+</layout>

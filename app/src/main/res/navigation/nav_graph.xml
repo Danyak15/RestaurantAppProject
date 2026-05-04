@@ -36,6 +36,9 @@
         <action
             android:id="@+id/action_profileFragment_to_favoriteDishesFragment"
             app:destination="@id/favoriteDishesFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_myReservationsFragment"
+            app:destination="@id/myReservationsFragment" />
     </fragment>
     <fragment
         android:id="@+id/restaurantDetailsFragment"
@@ -129,6 +132,11 @@
             android:id="@+id/action_favoriteDishesFragment_to_dishDetailsFragment"
             app:destination="@id/dishDetailsFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/myReservationsFragment"
+        android:name="com.example.restaurantapp.presentation.reservation.MyReservationsFragment"
+        android:label="fragment_my_reservations"
+        tools:layout="@layout/fragment_my_reservations" />
 
 
 </navigation>
