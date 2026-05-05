@@ -4,11 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.restaurantapp.domain.model.Reservation
 import com.example.restaurantapp.domain.repository.ReservationRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MyReservationsViewModel(
+@HiltViewModel
+class MyReservationsViewModel @Inject constructor(
     private val reservationRepository: ReservationRepository
 ) : ViewModel() {
     private val _reservations = MutableStateFlow<List<Reservation>>(emptyList())

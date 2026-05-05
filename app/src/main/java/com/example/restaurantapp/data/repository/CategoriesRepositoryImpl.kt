@@ -6,8 +6,9 @@ import com.example.restaurantapp.domain.model.Category
 import com.example.restaurantapp.domain.repository.CategoriesRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class CategoriesRepositoryImpl(
+class CategoriesRepositoryImpl @Inject constructor(
     private val categoryDao: CategoryDao
 ) : CategoriesRepository {
     override fun getCategoriesByRestaurantId(restaurantId: Int): Flow<List<Category>> {

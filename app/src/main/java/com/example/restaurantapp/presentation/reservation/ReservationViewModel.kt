@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.restaurantapp.domain.model.Restaurant
 import com.example.restaurantapp.domain.repository.ReservationRepository
 import com.example.restaurantapp.domain.repository.RestaurantsRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,8 +14,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
+import javax.inject.Inject
 
-class ReservationViewModel(
+@HiltViewModel
+class ReservationViewModel @Inject constructor(
     private val reservationRepository: ReservationRepository,
     private val restaurantRepository: RestaurantsRepository
 ) : ViewModel() {

@@ -6,9 +6,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.restaurantapp.domain.model.Dish
 import com.example.restaurantapp.domain.repository.DishesRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class DishesViewModel(
+@HiltViewModel
+class DishesViewModel @Inject constructor(
     private val repository: DishesRepository
 ) : ViewModel() {
     private val _dishes = MutableLiveData<List<Dish>>()

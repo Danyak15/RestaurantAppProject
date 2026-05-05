@@ -3,9 +3,13 @@ package com.example.restaurantapp.data.utils
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class NetworkHelper(
-    private val context: Context
+@Singleton
+class NetworkHelper @Inject constructor(
+    @param:ApplicationContext private val context: Context
 ) {
     private fun isInternetAvailable(): Boolean {
         val connectivityManager =

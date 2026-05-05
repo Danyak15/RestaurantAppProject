@@ -6,8 +6,9 @@ import com.example.restaurantapp.data.remote.dto.request.ReservationRequest
 import com.example.restaurantapp.data.utils.NetworkHelper
 import com.example.restaurantapp.domain.model.Reservation
 import com.example.restaurantapp.domain.repository.ReservationRepository
+import javax.inject.Inject
 
-class ReservationRepositoryImpl(
+class ReservationRepositoryImpl @Inject constructor(
     private val reservationApi: ReservationApi,
     private val networkHelper: NetworkHelper
 ) : ReservationRepository {

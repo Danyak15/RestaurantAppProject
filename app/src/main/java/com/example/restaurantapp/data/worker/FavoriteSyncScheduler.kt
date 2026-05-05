@@ -8,10 +8,14 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class FavoriteSyncScheduler(
-    private val context: Context
+@Singleton
+class FavoriteSyncScheduler @Inject constructor(
+    @param:ApplicationContext private val context: Context
 ) {
     fun schedule() {
         val constraints = Constraints.Builder()

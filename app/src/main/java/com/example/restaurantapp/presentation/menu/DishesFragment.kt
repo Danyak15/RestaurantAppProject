@@ -9,17 +9,15 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.restaurantapp.RestaurantApplication
 import com.example.restaurantapp.databinding.FragmentDishesBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class DishesFragment : Fragment() {
     private var _binding: FragmentDishesBinding? = null
     private val binding get() = _binding!!
     private val args: DishesFragmentArgs by navArgs()
-    private val viewModel: DishesViewModel by viewModels {
-        val appContainer = (requireActivity().application as RestaurantApplication).appContainer
-        DishesViewModelFactory(appContainer.dishesRepository)
-    }
+    private val viewModel: DishesViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

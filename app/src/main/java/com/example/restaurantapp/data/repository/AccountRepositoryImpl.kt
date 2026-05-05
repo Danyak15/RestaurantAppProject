@@ -12,8 +12,9 @@ import com.example.restaurantapp.data.remote.dto.response.LoginResponse
 import com.example.restaurantapp.data.remote.dto.response.UserResponse
 import com.example.restaurantapp.data.utils.NetworkHelper
 import com.example.restaurantapp.domain.repository.AccountRepository
+import javax.inject.Inject
 
-class AccountRepositoryImpl(
+class AccountRepositoryImpl @Inject constructor(
     private val userDao: UserDao,
     private val accountApi: AccountApi,
     private val networkHelper: NetworkHelper,

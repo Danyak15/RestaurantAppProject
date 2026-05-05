@@ -11,8 +11,9 @@ import com.example.restaurantapp.data.worker.FavoriteSyncScheduler
 import com.example.restaurantapp.domain.repository.FavoriteDishRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import javax.inject.Inject
 
-class FavoriteDishRepositoryImpl(
+class FavoriteDishRepositoryImpl @Inject constructor(
     private val favoriteDishDao: FavoriteDishDao,
     private val favoriteSyncDao: FavoriteSyncDao,
     private val favoriteApi: FavoriteApi,

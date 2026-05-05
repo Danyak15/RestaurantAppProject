@@ -10,21 +10,15 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.restaurantapp.RestaurantApplication
 import com.example.restaurantapp.databinding.FragmentMenuCategoriesBinding
 import com.example.restaurantapp.presentation.details.RestaurantDetailsFragmentDirections
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class MenuCategoriesFragment : Fragment() {
     private var _binding: FragmentMenuCategoriesBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: MenuCategoriesViewModel by viewModels {
-        val appContainer = (requireActivity().application as RestaurantApplication).appContainer
-        MenuCategoriesViewModelFactory(
-            appContainer.categoriesRepository,
-            appContainer.dishesRepository
-        )
-    }
+    private val viewModel: MenuCategoriesViewModel by viewModels()
     private val categoriesAdapter by lazy {
         MenuCategoriesAdapter { category ->
             val action = RestaurantDetailsFragmentDirections

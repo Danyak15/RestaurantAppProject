@@ -8,10 +8,13 @@ import com.example.restaurantapp.domain.model.Category
 import com.example.restaurantapp.domain.model.Dish
 import com.example.restaurantapp.domain.repository.CategoriesRepository
 import com.example.restaurantapp.domain.repository.DishesRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MenuCategoriesViewModel(
+@HiltViewModel
+class MenuCategoriesViewModel @Inject constructor(
     private val categoriesRepository: CategoriesRepository,
     private val dishesRepository: DishesRepository
 ) : ViewModel() {
@@ -24,7 +27,7 @@ class MenuCategoriesViewModel(
     private val _foundDishes = MutableLiveData<List<Dish>>()
     val foundDishes: LiveData<List<Dish>> = _foundDishes
 
-    private val _searchText = MutableLiveData<String>("")
+    private val _searchText = MutableLiveData("")
     val searchText: LiveData<String> = _searchText
 
     fun loadCategories(restaurantId: Int) {

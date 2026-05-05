@@ -7,9 +7,12 @@ import androidx.lifecycle.viewModelScope
 import com.example.restaurantapp.data.remote.dto.response.UserResponse
 import com.example.restaurantapp.domain.repository.AccountRepository
 import com.example.restaurantapp.domain.repository.FavoriteDishRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ProfileViewModel(
+@HiltViewModel
+class ProfileViewModel @Inject constructor(
     private val accountRepository: AccountRepository,
     private val favoriteRepository: FavoriteDishRepository
 ) : ViewModel() {

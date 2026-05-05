@@ -11,22 +11,17 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
-import com.example.restaurantapp.RestaurantApplication
 import com.example.restaurantapp.databinding.FragmentDishDetailsBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class DishDetailsFragment : Fragment() {
     private var _binding: FragmentDishDetailsBinding? = null
     private val binding get() = _binding!!
     private val args: DishDetailsFragmentArgs by navArgs()
 
-    private val viewModel: DishDetailsViewModel by viewModels {
-        val appContainer = (requireActivity().application as RestaurantApplication).appContainer
-        DishDetailsViewModelFactory(
-            appContainer.dishesRepository,
-            appContainer.favoriteDishRepository
-        )
-    }
+    private val viewModel: DishDetailsViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

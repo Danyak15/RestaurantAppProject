@@ -8,7 +8,9 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.example.restaurantapp.databinding.FragmentRestaurantDetailsBinding
 import com.google.android.material.tabs.TabLayoutMediator
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class RestaurantDetailsFragment : Fragment() {
     private var _binding: FragmentRestaurantDetailsBinding? = null
     private val binding get() = _binding!!

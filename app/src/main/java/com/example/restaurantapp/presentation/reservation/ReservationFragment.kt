@@ -15,10 +15,11 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.restaurantapp.RestaurantApplication
 import com.example.restaurantapp.databinding.FragmentReservationBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class ReservationFragment : Fragment() {
     private var _binding: FragmentReservationBinding? = null
     private val binding get() = _binding!!
@@ -30,13 +31,7 @@ class ReservationFragment : Fragment() {
         viewModel.selectTime(time)
     }
 
-    private val viewModel: ReservationViewModel by viewModels {
-        val appContainer = (requireActivity().application as RestaurantApplication).appContainer
-        ReservationViewModelFactory(
-            appContainer.reservationRepository,
-            appContainer.restaurantsRepository
-        )
-    }
+    private val viewModel: ReservationViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

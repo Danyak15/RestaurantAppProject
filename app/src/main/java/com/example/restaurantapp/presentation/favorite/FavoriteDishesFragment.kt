@@ -14,25 +14,19 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import com.example.restaurantapp.RestaurantApplication
 import com.example.restaurantapp.databinding.FragmentFavoriteDishesBinding
 import com.example.restaurantapp.domain.model.Restaurant
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class FavoriteDishesFragment : Fragment() {
     private var _binding: FragmentFavoriteDishesBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var dishesAdapter: FavoriteDishesAdapter
 
-    private val viewModel: FavoriteDishesViewModel by viewModels {
-        val appContainer = (requireActivity().application as RestaurantApplication).appContainer
-        FavoriteDishesViewModelFactory(
-            appContainer.restaurantsRepository,
-            appContainer.dishesRepository,
-            appContainer.favoriteDishRepository
-        )
-    }
+    private val viewModel: FavoriteDishesViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

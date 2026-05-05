@@ -5,8 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import com.example.restaurantapp.domain.model.Restaurant
 import com.example.restaurantapp.domain.repository.RestaurantsRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class RestaurantsViewModel(
+@HiltViewModel
+class RestaurantsViewModel @Inject constructor(
     private val repository: RestaurantsRepository
 ) : ViewModel() {
     val restaurants: LiveData<List<Restaurant>> = repository.getRestaurants().asLiveData()

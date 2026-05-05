@@ -9,16 +9,14 @@ import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.restaurantapp.R
-import com.example.restaurantapp.RestaurantApplication
 import com.example.restaurantapp.databinding.FragmentRegisterBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class RegisterFragment : Fragment() {
     private var _binding: FragmentRegisterBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: AuthViewModel by viewModels {
-        val appContainer = (requireActivity().application as RestaurantApplication).appContainer
-        AuthViewModelFactory(appContainer.accountRepository)
-    }
+    private val viewModel: AuthViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

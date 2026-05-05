@@ -8,16 +8,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.restaurantapp.RestaurantApplication
 import com.example.restaurantapp.databinding.FragmentRestaurantsBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class RestaurantsFragment : Fragment() {
     private var _binding: FragmentRestaurantsBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: RestaurantsViewModel by viewModels {
-        val appContainer = (requireActivity().application as RestaurantApplication).appContainer
-        RestaurantsViewModelFactory(appContainer.restaurantsRepository)
-    }
+    private val viewModel: RestaurantsViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

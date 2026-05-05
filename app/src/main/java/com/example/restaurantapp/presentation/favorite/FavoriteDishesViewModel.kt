@@ -7,6 +7,7 @@ import com.example.restaurantapp.domain.model.Restaurant
 import com.example.restaurantapp.domain.repository.DishesRepository
 import com.example.restaurantapp.domain.repository.FavoriteDishRepository
 import com.example.restaurantapp.domain.repository.RestaurantsRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -16,8 +17,10 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class FavoriteDishesViewModel(
+@HiltViewModel
+class FavoriteDishesViewModel @Inject constructor(
     private val restaurantsRepository: RestaurantsRepository,
     private val dishesRepository: DishesRepository,
     private val favoriteRepository: FavoriteDishRepository

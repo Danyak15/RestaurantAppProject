@@ -6,16 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.example.restaurantapp.RestaurantApplication
 import com.example.restaurantapp.databinding.FragmentInfoBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class InfoFragment : Fragment() {
     private var _binding: FragmentInfoBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: InfoViewModel by viewModels {
-        val appContainer = (requireActivity().application as RestaurantApplication).appContainer
-        InfoViewModelFactory(appContainer.restaurantsRepository)
-    }
+    private val viewModel: InfoViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

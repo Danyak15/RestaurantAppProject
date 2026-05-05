@@ -5,14 +5,17 @@ import androidx.lifecycle.viewModelScope
 import com.example.restaurantapp.domain.model.Dish
 import com.example.restaurantapp.domain.repository.DishesRepository
 import com.example.restaurantapp.domain.repository.FavoriteDishRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class DishDetailsViewModel(
+@HiltViewModel
+class DishDetailsViewModel @Inject constructor(
     private val dishesRepository: DishesRepository,
     private val favoriteDishRepository: FavoriteDishRepository
 ) : ViewModel() {

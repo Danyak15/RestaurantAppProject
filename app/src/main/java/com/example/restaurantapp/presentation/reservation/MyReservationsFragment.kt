@@ -11,10 +11,11 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.example.restaurantapp.RestaurantApplication
 import com.example.restaurantapp.databinding.FragmentMyReservationsBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class MyReservationsFragment : Fragment() {
     private var _binding: FragmentMyReservationsBinding? = null
     private val binding get() = _binding!!
@@ -22,10 +23,7 @@ class MyReservationsFragment : Fragment() {
         viewModel.cancelReservation(reservation.id)
     }
 
-    private val viewModel: MyReservationsViewModel by viewModels {
-        val appContainer = (requireActivity().application as RestaurantApplication).appContainer
-        MyReservationsViewModelFactory(appContainer.reservationRepository)
-    }
+    private val viewModel: MyReservationsViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

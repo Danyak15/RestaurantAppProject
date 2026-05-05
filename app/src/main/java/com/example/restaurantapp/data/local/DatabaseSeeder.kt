@@ -7,8 +7,9 @@ import com.example.restaurantapp.data.local.mapper.toEntity
 import com.example.restaurantapp.data.mock.MockCategories
 import com.example.restaurantapp.data.mock.MockDishes
 import com.example.restaurantapp.data.mock.MockRestaurants
+import javax.inject.Inject
 
-class DatabaseSeeder(
+class DatabaseSeeder @Inject constructor(
     private val restaurantDao: RestaurantDao,
     private val categoryDao: CategoryDao,
     private val dishDao: DishDao
