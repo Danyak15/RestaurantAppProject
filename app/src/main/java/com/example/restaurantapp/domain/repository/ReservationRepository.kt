@@ -18,5 +18,4 @@ interface ReservationRepository {
         date: String,
         guests: Int
     ): Result<List<String>>
-
 }

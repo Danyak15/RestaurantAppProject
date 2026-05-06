@@ -38,8 +38,8 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun updateMe(name: String, surname: String, email: String) {
-        if (name.isBlank() || surname.isBlank() || email.isBlank()) {
+    fun updateMe(name: String, surname: String, email: String?) {
+        if (name.isBlank() || surname.isBlank()) {
             _toastMessage.value = "Заполните пустые поля"
             return
         }

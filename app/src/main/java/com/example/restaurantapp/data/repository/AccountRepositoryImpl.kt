@@ -23,7 +23,7 @@ class AccountRepositoryImpl @Inject constructor(
     override suspend fun register(
         name: String,
         surname: String,
-        email: String,
+        phone: String,
         password: String
     ): Result<Unit> {
         return try {
@@ -33,38 +33,41 @@ class AccountRepositoryImpl @Inject constructor(
                 RegisterRequest(
                     name = name,
                     surname = surname,
-                    email = email,
+                    phone = phone,
                     password = password
                 )
             )
 
             if (response.isSuccessful) {
-                sessionManager.saveCredentials(email, password)
                 Result.success(Unit)
             } else {
-                Result.failure(Exception("Registration failed: ${response.code()}"))
+                Result.failure(Exception("Ошибка при регистрации: ${response.code()}"))
             }
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    override suspend fun login(email: String, password: String): Result<LoginResponse> {
+    override suspend fun login(phone: String, password: String): Result<LoginResponse> {
         return try {
             networkHelper.checkInternetConnection()
 
             val response = accountApi.login(
                 LoginRequest(
-                    email = email,
+                    phone = phone,
                     password = password
                 )
             )
 
-            if (response.isSuccessful && response.body() != null) {
-                sessionManager.saveCredentials(email, password)
-                Result.success(response.body()!!)
+            val body = response.body()
+
+            if (response.isSuccessful && body != null) {
+                sessionManager.saveToken(body.token)
+                userDao.saveUser(body.user.toEntity())
+
+                Result.success(body)
             } else {
-                Result.failure(Exception("Login failed: ${response.code()}"))
+                Result.failure(Exception("Ошибка при входе: ${response.code()}"))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -72,28 +75,30 @@ class AccountRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getMe(): Result<UserResponse> {
-        val email = sessionManager.getEmail()
-            ?: return Result.failure(Exception("Пользователь не авторизован"))
+       if (!sessionManager.isAuthorized()) {
+            return Result.failure(Exception("Пользователь не авторизован"))
+       }
 
         return try {
             networkHelper.checkInternetConnection()
 
             val response = accountApi.getMe()
+            val body = response.body()
 
-            if (response.isSuccessful && response.body() != null) {
-                userDao.saveUser(response.body()!!.toEntity())
-                Result.success(response.body()!!)
+            if (response.isSuccessful && body != null) {
+                userDao.saveUser(body.toEntity())
+                Result.success(body)
             } else {
-                val user = userDao.getUser(email)
+                val user = userDao.getCurrentUser()
 
                 if (user != null) {
                     Result.success(user.toResponse())
                 } else {
-                    Result.failure(Exception("Get me failed: ${response.code()}"))
+                    Result.failure(Exception("Ошибка при получении пользователя: ${response.code()}"))
                 }
             }
         } catch (e: Exception) {
-            val user = userDao.getUser(email)
+            val user = userDao.getCurrentUser()
 
             if (user != null) {
                 Result.success(user.toResponse())
@@ -106,10 +111,11 @@ class AccountRepositoryImpl @Inject constructor(
     override suspend fun updateMe(
         name: String,
         surname: String,
-        email: String
+        email: String?
     ): Result<UserResponse> {
-        val password = sessionManager.getPassword()
-            ?: return Result.failure(Exception("Пользователь не авторизован"))
+        if (!sessionManager.isAuthorized()) {
+            return Result.failure(Exception("Пользователь не авторизован"))
+        }
 
         return try {
             networkHelper.checkInternetConnection()
@@ -122,12 +128,13 @@ class AccountRepositoryImpl @Inject constructor(
                 )
             )
 
-            if (response.isSuccessful && response.body() != null) {
-                sessionManager.saveCredentials(email, password)
-                userDao.saveUser(response.body()!!.toEntity())
-                Result.success(response.body()!!)
+            val body = response.body()
+
+            if (response.isSuccessful && body != null) {
+                userDao.saveUser(body.toEntity())
+                Result.success(body)
             } else {
-                Result.failure(Exception("Update failed: ${response.code()}"))
+                Result.failure(Exception("Ошибка при изменении данных: ${response.code()}"))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -135,9 +142,8 @@ class AccountRepositoryImpl @Inject constructor(
     }
 
     override suspend fun clearSession() {
-        val email = sessionManager.getEmail() ?: return
         sessionManager.clearSession()
-        userDao.deleteUser(email)
+        userDao.clearUser()
     }
 
     override fun checkAuth(): Boolean = sessionManager.isAuthorized()

@@ -7,7 +7,7 @@
     tools:context=".presentation.profile.ProfileFragment">
 
     <TextView
-        android:id="@+id/tv_email"
+        android:id="@+id/tv_phone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Профиль"

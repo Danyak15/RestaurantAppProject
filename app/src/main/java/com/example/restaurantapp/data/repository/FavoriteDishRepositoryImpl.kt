@@ -3,13 +3,16 @@ package com.example.restaurantapp.data.repository
 import com.example.restaurantapp.data.local.auth.SessionManager
 import com.example.restaurantapp.data.local.dao.FavoriteDishDao
 import com.example.restaurantapp.data.local.dao.FavoriteSyncDao
+import com.example.restaurantapp.data.local.dao.UserDao
 import com.example.restaurantapp.data.local.entity.FavoriteDishEntity
 import com.example.restaurantapp.data.local.entity.FavoriteSyncEntity
 import com.example.restaurantapp.data.remote.api.FavoriteApi
 import com.example.restaurantapp.data.utils.NetworkHelper
 import com.example.restaurantapp.data.worker.FavoriteSyncScheduler
 import com.example.restaurantapp.domain.repository.FavoriteDishRepository
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 
@@ -17,77 +20,100 @@ class FavoriteDishRepositoryImpl @Inject constructor(
     private val favoriteDishDao: FavoriteDishDao,
     private val favoriteSyncDao: FavoriteSyncDao,
     private val favoriteApi: FavoriteApi,
+    private val userDao: UserDao,
     private val sessionManager: SessionManager,
     private val networkHelper: NetworkHelper,
     private val favoriteSyncScheduler: FavoriteSyncScheduler
 ) : FavoriteDishRepository {
     override fun isAuthorized(): Boolean = sessionManager.isAuthorized()
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun observeIsFavorite(dishId: Int): Flow<Boolean> {
-        val email = sessionManager.getEmail() ?: return flowOf(false)
-        return favoriteDishDao.observeIsFavorite(email, dishId)
+        if (!sessionManager.isAuthorized()) {
+            return flowOf(false)
+        }
+        return userDao.observeCurrentUser().flatMapLatest { user ->
+            if (user == null) {
+                flowOf(false)
+            } else {
+                favoriteDishDao.observeIsFavorite(user.id, dishId)
+            }
+        }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun observeFavoriteDishIds(): Flow<List<Int>> {
-        val email = sessionManager.getEmail() ?: return flowOf(emptyList())
-        return favoriteDishDao.observeFavoriteDishIds(email)
+        if (!sessionManager.isAuthorized()) {
+            return flowOf(emptyList())
+        }
+
+        return userDao.observeCurrentUser().flatMapLatest { user ->
+            if (user == null) {
+                flowOf(emptyList())
+            } else {
+                favoriteDishDao.observeFavoriteDishIds(user.id)
+            }
+        }
     }
 
     override suspend fun addToFavorites(dishId: Int): Result<Unit> {
-        val email = sessionManager.getEmail()
-            ?: return Result.failure(Exception("Пользователь не авторизован"))
+        return try {
+            val userId = getCurrentUserId()
 
-        favoriteDishDao.addToFavorites(
-            FavoriteDishEntity(
-                userEmail = email,
-                dishId = dishId
-            )
-        )
-
-        val existingTask = favoriteSyncDao.getTask(email, dishId)
-
-        if (existingTask?.action == "REMOVE") {
-            favoriteSyncDao.removeTask(email, dishId)
-        } else {
-            favoriteSyncDao.addTask(
-                FavoriteSyncEntity(
-                    userEmail = email,
-                    dishId = dishId,
-                    action = "ADD"
+            favoriteDishDao.addToFavorites(
+                FavoriteDishEntity(
+                    userId = userId,
+                    dishId = dishId
                 )
             )
-        }
 
-        return trySyncItem(dishId, "ADD")
+            val existingTask = favoriteSyncDao.getTask(userId, dishId)
+
+            if (existingTask?.action == "REMOVE") {
+                favoriteSyncDao.removeTask(userId, dishId)
+            } else {
+                favoriteSyncDao.addTask(
+                    FavoriteSyncEntity(
+                        userId = userId,
+                        dishId = dishId,
+                        action = "ADD"
+                    )
+                )
+            }
+
+            trySyncItem(userId, dishId, "ADD")
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
     override suspend fun removeFromFavorites(dishId: Int): Result<Unit> {
-        val email = sessionManager.getEmail()
-            ?: return Result.failure(Exception("Пользователь не авторизован"))
+        return try {
+            val userId = getCurrentUserId()
 
-        favoriteDishDao.removeFromFavorites(email, dishId)
+            favoriteDishDao.removeFromFavorites(userId, dishId)
 
-        val existingTask = favoriteSyncDao.getTask(email, dishId)
+            val existingTask = favoriteSyncDao.getTask(userId, dishId)
 
-        if (existingTask?.action == "ADD") {
-            favoriteSyncDao.removeTask(email, dishId)
-        } else {
-            favoriteSyncDao.addTask(
-                FavoriteSyncEntity(
-                    userEmail = email,
-                    dishId = dishId,
-                    action = "REMOVE"
+            if (existingTask?.action == "ADD") {
+                favoriteSyncDao.removeTask(userId, dishId)
+            } else {
+                favoriteSyncDao.addTask(
+                    FavoriteSyncEntity(
+                        userId = userId,
+                        dishId = dishId,
+                        action = "REMOVE"
+                    )
                 )
-            )
-        }
+            }
 
-        return trySyncItem(dishId, "REMOVE")
+            trySyncItem(userId, dishId, "REMOVE")
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
-    private suspend fun trySyncItem(dishId: Int, action: String): Result<Unit> {
-        val email = sessionManager.getEmail()
-            ?: return Result.failure(Exception("Пользователь не авторизован"))
-
+    private suspend fun trySyncItem(userId: Long, dishId: Int, action: String): Result<Unit> {
         return try {
             networkHelper.checkInternetConnection()
 
@@ -98,26 +124,25 @@ class FavoriteDishRepositoryImpl @Inject constructor(
             }
 
             if (response.isSuccessful) {
-                favoriteSyncDao.removeTask(email, dishId)
+                favoriteSyncDao.removeTask(userId, dishId)
             } else {
                 favoriteSyncScheduler.schedule()
             }
 
             Result.success(Unit)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             favoriteSyncScheduler.schedule()
             Result.success(Unit)
         }
     }
 
     override suspend fun pushFavorites(): Result<Unit> {
-        val email = sessionManager.getEmail()
-            ?: return Result.failure(Exception("Пользователь не авторизован"))
-
         return try {
             networkHelper.checkInternetConnection()
 
-            val tasks = favoriteSyncDao.getTasks(email)
+            val userId = getCurrentUserId()
+
+            val tasks = favoriteSyncDao.getTasks(userId)
             var allSuccessful = true
 
             tasks.forEach { task ->
@@ -128,7 +153,7 @@ class FavoriteDishRepositoryImpl @Inject constructor(
                 }
 
                 if (response?.isSuccessful == true) {
-                    favoriteSyncDao.removeTask(email, task.dishId)
+                    favoriteSyncDao.removeTask(userId, task.dishId)
                 } else {
                     allSuccessful = false
                 }
@@ -147,17 +172,16 @@ class FavoriteDishRepositoryImpl @Inject constructor(
     }
 
     override suspend fun pullFavorites(): Result<Unit> {
-        val email = sessionManager.getEmail()
-            ?: return Result.failure(Exception("Пользователь не авторизован"))
-
         return try {
             networkHelper.checkInternetConnection()
+
+            val userId = getCurrentUserId()
 
             val response = favoriteApi.getFavoriteDishes()
 
             if (response.isSuccessful && response.body() != null)  {
                 val favoriteIds = response.body()!!
-                favoriteDishDao.updateFavoriteDishes(email, favoriteIds)
+                favoriteDishDao.updateFavoriteDishes(userId, favoriteIds)
 
                 Result.success(Unit)
             } else {
@@ -179,16 +203,24 @@ class FavoriteDishRepositoryImpl @Inject constructor(
     }
 
     override suspend fun clearFavorites(): Result<Unit> {
-        val email = sessionManager.getEmail()
-            ?: return Result.failure(Exception("Пользователь не авторизован"))
-
         return try {
-            favoriteSyncDao.clearTasks(email)
-            favoriteDishDao.clearFavorites(email)
+            val userId = getCurrentUserId()
+
+            favoriteSyncDao.clearTasks(userId)
+            favoriteDishDao.clearFavorites(userId)
 
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }
+
+    private suspend fun getCurrentUserId(): Long {
+        if (!sessionManager.isAuthorized()) {
+            throw Exception("Пользователь не авторизован")
+        }
+
+        return userDao.getCurrentUser()?.id
+            ?: throw Exception("Пользователь не найден в локальной базе")
     }
 }

@@ -4,9 +4,9 @@ import androidx.room.Entity
 
 @Entity(
     tableName = "favorite_dishes",
-    primaryKeys = ["userEmail", "dishId"]
+    primaryKeys = ["userId", "dishId"]
 )
 data class FavoriteDishEntity(
-    val userEmail: String,
+    val userId: Long,
     val dishId: Int
 )

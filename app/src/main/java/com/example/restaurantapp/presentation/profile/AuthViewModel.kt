@@ -19,36 +19,42 @@ class AuthViewModel @Inject constructor(
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> = _errorMessage
 
-    fun login(email: String, password: String) {
-        if (email.isBlank() || password.isBlank()) {
+    fun login(phone: String, password: String) {
+        if (phone.isBlank() || password.isBlank()) {
             _errorMessage.value = "Заполни пустые поля"
             return
         }
 
         viewModelScope.launch {
-            val result = accountRepository.login(email, password)
+            val result = accountRepository.login(phone, password)
 
             result.onSuccess {
                 _isAuthSuccess.value = true
             }.onFailure { error ->
-                _errorMessage.value = error.message ?: "Ошибка входа"
+                _errorMessage.value = error.message ?: "Ошибка при входе"
             }
         }
     }
 
-    fun register(name: String, surname: String, email: String, password: String) {
-        if (name.isBlank() || surname.isBlank() || email.isBlank() || password.isBlank()) {
+    fun register(name: String, surname: String, phone: String, password: String) {
+        if (name.isBlank() || surname.isBlank() || phone.isBlank() || password.isBlank()) {
             _errorMessage.value = "Заполни пустые поля"
             return
         }
 
         viewModelScope.launch {
-            val result = accountRepository.register(name, surname, email, password)
+            val registerResult = accountRepository.register(name, surname, phone, password)
 
-            result.onSuccess {
-                _isAuthSuccess.value = true
+            registerResult.onSuccess {
+                val loginResult = accountRepository.login(phone, password)
+
+                loginResult.onSuccess {
+                    _isAuthSuccess.value = true
+                }.onFailure { error ->
+                    _errorMessage.value = error.message ?: "Ошибка при входе после регистрации"
+                }
             }.onFailure { error ->
-                _errorMessage.value = error.message ?: "Ошибка регистрации"
+                _errorMessage.value = error.message ?: "Ошибка при регистрации"
             }
         }
     }

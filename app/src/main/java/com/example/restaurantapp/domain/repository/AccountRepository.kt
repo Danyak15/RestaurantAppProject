@@ -7,18 +7,18 @@ interface AccountRepository {
     suspend fun register(
         name: String,
         surname: String,
-        email: String,
+        phone: String,
         password: String
     ): Result<Unit>
 
-    suspend fun login(email: String, password: String): Result<LoginResponse>
+    suspend fun login(phone: String, password: String): Result<LoginResponse>
 
     suspend fun getMe(): Result<UserResponse>
 
     suspend fun updateMe(
         name: String,
         surname: String,
-        email: String
+        email: String?
     ): Result<UserResponse>
 
     suspend fun clearSession()

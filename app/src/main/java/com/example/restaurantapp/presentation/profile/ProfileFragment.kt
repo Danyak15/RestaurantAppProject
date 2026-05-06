@@ -69,7 +69,7 @@ class ProfileFragment : Fragment() {
 
         viewModel.user.observe(viewLifecycleOwner) { user ->
             if (user != null) {
-                binding.tvEmail.text = user.email
+                binding.tvPhone.text = user.phone
             }
         }
     }

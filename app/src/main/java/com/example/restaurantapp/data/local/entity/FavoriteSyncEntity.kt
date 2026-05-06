@@ -4,10 +4,10 @@ import androidx.room.Entity
 
 @Entity(
     tableName = "favorite_sync_queue",
-    primaryKeys = ["userEmail", "dishId"]
+    primaryKeys = ["userId", "dishId"]
 )
 data class FavoriteSyncEntity(
-    val userEmail: String,
+    val userId: Long,
     val dishId: Int,
     val action: String
 )

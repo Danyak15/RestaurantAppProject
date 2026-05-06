@@ -36,7 +36,7 @@ class LoginFragment : Fragment() {
     private fun setupClicks() {
         binding.btnLogin.setOnClickListener {
             viewModel.login(
-                binding.etEmail.text.toString().trim(),
+                binding.etPhone.text.toString().trim(),
                 binding.etPassword.text.toString().trim()
             )
         }

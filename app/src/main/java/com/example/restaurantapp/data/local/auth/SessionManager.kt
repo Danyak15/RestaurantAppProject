@@ -12,20 +12,15 @@ class SessionManager @Inject constructor(
 ) {
     private val prefs = context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
 
-    fun saveCredentials(email: String, password: String) {
+    fun saveToken(token: String) {
         prefs.edit {
-            putString("email", email)
-            putString("password", password)
+            putString("token", token)
         }
     }
 
-    fun getEmail(): String? = prefs.getString("email", null)
+    fun getToken(): String? = prefs.getString("token", null)
 
-    fun getPassword(): String? = prefs.getString("password", null)
-
-    fun isAuthorized(): Boolean {
-        return !getEmail().isNullOrBlank() && !getPassword().isNullOrBlank()
-    }
+    fun isAuthorized(): Boolean = !getToken().isNullOrBlank()
 
     fun clearSession() {
         prefs.edit { clear() }

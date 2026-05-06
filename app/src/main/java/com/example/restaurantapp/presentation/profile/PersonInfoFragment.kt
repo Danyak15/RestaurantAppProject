@@ -30,16 +30,16 @@ class PersonInfoFragment : Fragment() {
 
         viewModel.getMe()
 
-        setupCLicks()
+        setupClicks()
         observeViewModel()
     }
 
-    private fun setupCLicks() {
+    private fun setupClicks() {
         binding.btnUpdate.setOnClickListener {
             viewModel.updateMe(
                 binding.etName.text.toString().trim(),
                 binding.etSurname.text.toString().trim(),
-                binding.etEmail.text.toString().trim()
+                binding.etEmail.text.toString().trim().takeIf { it.isNotBlank() }
             )
         }
     }

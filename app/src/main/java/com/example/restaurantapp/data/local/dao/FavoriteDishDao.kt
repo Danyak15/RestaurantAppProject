@@ -13,26 +13,26 @@ interface FavoriteDishDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addToFavorites(favoriteDish: FavoriteDishEntity)
 
-    @Query("DELETE FROM favorite_dishes WHERE userEmail = :userEmail AND dishId = :dishId")
-    suspend fun removeFromFavorites(userEmail: String, dishId: Int)
+    @Query("DELETE FROM favorite_dishes WHERE userId = :userId AND dishId = :dishId")
+    suspend fun removeFromFavorites(userId: Long, dishId: Int)
 
-    @Query("SELECT EXISTS(SELECT 1 FROM favorite_dishes WHERE userEmail = :userEmail AND dishId = :dishId)")
-    fun observeIsFavorite(userEmail: String, dishId: Int): Flow<Boolean>
+    @Query("SELECT EXISTS(SELECT 1 FROM favorite_dishes WHERE userId = :userId AND dishId = :dishId)")
+    fun observeIsFavorite(userId: Long, dishId: Int): Flow<Boolean>
 
-    @Query("SELECT dishId FROM favorite_dishes WHERE userEmail = :userEmail")
-    fun observeFavoriteDishIds(userEmail: String): Flow<List<Int>>
+    @Query("SELECT dishId FROM favorite_dishes WHERE userId = :userId")
+    fun observeFavoriteDishIds(userId: Long): Flow<List<Int>>
 
-    @Query("DELETE FROM favorite_dishes WHERE userEmail = :userEmail")
-    suspend fun clearFavorites(userEmail: String)
+    @Query("DELETE FROM favorite_dishes WHERE userId = :userId")
+    suspend fun clearFavorites(userId: Long)
 
     @Transaction
-    suspend fun updateFavoriteDishes(email: String, favoriteIds: List<Int>) {
-        clearFavorites(email)
+    suspend fun updateFavoriteDishes(userId: Long, favoriteIds: List<Int>) {
+        clearFavorites(userId)
 
         favoriteIds.forEach { id ->
             addToFavorites(
                 FavoriteDishEntity(
-                    userEmail = email,
+                    userId = userId,
                     dishId = id
                 )
             )

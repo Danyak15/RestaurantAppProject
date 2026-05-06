@@ -7,12 +7,14 @@ fun UserEntity.toResponse() = UserResponse(
     id = id,
     name = name,
     surname = surname,
+    phone = phone,
     email = email
 )
 
 fun UserResponse.toEntity() = UserEntity(
     id = id,
-    email = email,
     name = name,
-    surname = surname
+    surname = surname,
+    phone = phone,
+    email = email
 )

@@ -8,7 +8,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import okhttp3.Credentials
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -36,23 +35,15 @@ object NetworkModule {
         sessionManager: SessionManager
     ): Interceptor {
         return Interceptor { chain ->
-            val request = chain.request()
+            val token = sessionManager.getToken()
 
-            val email = sessionManager.getEmail()
-            val password = sessionManager.getPassword()
-
-            val authenticatedRequest =
-                if (!email.isNullOrBlank() && !password.isNullOrBlank()) {
-                    val credentials = Credentials.basic(email, password)
-
-                    request.newBuilder()
-                        .header("Authorization", credentials)
-                        .build()
-                } else {
-                    request
+            val request = chain.request().newBuilder().apply {
+                if (!token.isNullOrBlank()) {
+                    header("Authorization", "Bearer $token")
                 }
+            }.build()
 
-            chain.proceed(authenticatedRequest)
+            chain.proceed(request)
         }
     }
 
