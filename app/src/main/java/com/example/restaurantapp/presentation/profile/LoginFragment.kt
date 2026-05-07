@@ -7,10 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.restaurantapp.R
 import com.example.restaurantapp.databinding.FragmentLoginBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
@@ -36,34 +40,44 @@ class LoginFragment : Fragment() {
     private fun setupClicks() {
         binding.btnLogin.setOnClickListener {
             viewModel.login(
-                binding.etPhone.text.toString().trim(),
-                binding.etPassword.text.toString().trim()
+                phone = binding.etPhone.text.toString().trim(),
+                password = binding.etPassword.text.toString().trim()
             )
         }
 
         binding.tvGoToRegister.setOnClickListener {
-            findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
+            findNavController().navigate(
+                R.id.action_loginFragment_to_registerFragment
+            )
         }
     }
 
     private fun observeViewModel() {
-        viewModel.errorMessage.observe(viewLifecycleOwner) { error ->
-            if (error != null) {
-                Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
-                viewModel.clearError()
-            }
-        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.authSuccess.collect {
+                        findNavController().navigate(
+                            R.id.action_loginFragment_to_profileFragment
+                        )
+                    }
+                }
 
-        viewModel.isAuthSuccess.observe(viewLifecycleOwner) { success ->
-            if (success) {
-                viewModel.clearAuthSuccess()
-                findNavController().navigate(R.id.action_loginFragment_to_profileFragment)
+                launch {
+                    viewModel.message.collect { message ->
+                        Toast.makeText(
+                            requireContext(),
+                            message,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
             }
         }
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
         _binding = null
+        super.onDestroyView()
     }
 }

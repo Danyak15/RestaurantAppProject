@@ -6,8 +6,12 @@ import com.example.restaurantapp.domain.model.Restaurant
 import com.example.restaurantapp.domain.repository.ReservationRepository
 import com.example.restaurantapp.domain.repository.RestaurantsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
@@ -22,22 +26,25 @@ class ReservationViewModel @Inject constructor(
     private val restaurantRepository: RestaurantsRepository
 ) : ViewModel() {
     private val _restaurant = MutableStateFlow<Restaurant?>(null)
-    val restaurant = _restaurant.asStateFlow()
+    val restaurant: StateFlow<Restaurant?> = _restaurant.asStateFlow()
 
     private val _guests = MutableStateFlow(1)
-    val guests = _guests.asStateFlow()
+    val guests: StateFlow<Int> = _guests.asStateFlow()
 
     private val _dateSlots = MutableStateFlow<List<DateSlotModel>>(emptyList())
-    val dateSlots = _dateSlots.asStateFlow()
+    val dateSlots: StateFlow<List<DateSlotModel>> = _dateSlots.asStateFlow()
 
     private val _timeSlots = MutableStateFlow<List<TimeSlotModel>>(emptyList())
-    val timeSlots = _timeSlots.asStateFlow()
-
-    private val _message = MutableStateFlow<String?>(null)
-    val message = _message.asStateFlow()
+    val timeSlots: StateFlow<List<TimeSlotModel>> = _timeSlots.asStateFlow()
 
     private val _isLoading = MutableStateFlow(false)
-    val isLoading = _isLoading.asStateFlow()
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
+    private val _reservationSuccess = MutableSharedFlow<Unit>()
+    val reservationSuccess: SharedFlow<Unit> = _reservationSuccess.asSharedFlow()
+
+    private val _message = MutableSharedFlow<String>()
+    val message: SharedFlow<String> = _message.asSharedFlow()
 
     private val selectedDate = MutableStateFlow<LocalDate?>(null)
     private val selectedTime = MutableStateFlow<LocalTime?>(null)
@@ -114,17 +121,14 @@ class ReservationViewModel @Inject constructor(
             )
 
             result.onSuccess {
-                _message.value = "Стол успешно забронирован"
+                _message.emit("Стол успешно забронирован")
+                _reservationSuccess.emit(Unit)
             }.onFailure { error ->
-                _message.value = error.message ?: "Ошибка бронирования"
+                _message.emit(error.message ?: "Ошибка бронирования")
             }
 
             _isLoading.value = false
         }
-    }
-
-    fun clearMessage() {
-        _message.value = null
     }
 
     private fun generateDateSlots() {
@@ -157,7 +161,8 @@ class ReservationViewModel @Inject constructor(
                     )
                 }
                 selectedTime.value = null
-            }.onFailure {
+            }.onFailure { error ->
+                _message.emit(error.message ?: "Ошибка при получении времени")
                 _timeSlots.value = emptyList()
                 selectedTime.value = null
             }

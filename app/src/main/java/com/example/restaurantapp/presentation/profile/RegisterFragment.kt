@@ -7,10 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.restaurantapp.R
 import com.example.restaurantapp.databinding.FragmentRegisterBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class RegisterFragment : Fragment() {
@@ -44,28 +48,38 @@ class RegisterFragment : Fragment() {
         }
 
         binding.tvGoToLogin.setOnClickListener {
-            findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
+            findNavController().navigate(
+                R.id.action_registerFragment_to_loginFragment
+            )
         }
     }
 
     private fun observeViewModel() {
-        viewModel.errorMessage.observe(viewLifecycleOwner) { error ->
-            if (error != null) {
-                Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
-                viewModel.clearError()
-            }
-        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.authSuccess.collect {
+                        findNavController().navigate(
+                            R.id.action_registerFragment_to_profileFragment
+                        )
+                    }
+                }
 
-        viewModel.isAuthSuccess.observe(viewLifecycleOwner) { success ->
-            if (success) {
-                viewModel.clearAuthSuccess()
-                findNavController().navigate(R.id.action_registerFragment_to_profileFragment)
+                launch {
+                    viewModel.message.collect { message ->
+                        Toast.makeText(
+                            requireContext(),
+                            message,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
             }
         }
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
         _binding = null
+        super.onDestroyView()
     }
 }

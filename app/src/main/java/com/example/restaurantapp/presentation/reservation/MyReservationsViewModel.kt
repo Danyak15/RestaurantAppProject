@@ -5,7 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.restaurantapp.domain.model.Reservation
 import com.example.restaurantapp.domain.repository.ReservationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,8 +19,8 @@ class MyReservationsViewModel @Inject constructor(
     private val _reservations = MutableStateFlow<List<Reservation>>(emptyList())
     val reservations = _reservations.asStateFlow()
 
-    private val _message = MutableStateFlow<String?>(null)
-    val message = _message.asStateFlow()
+    private val _message = MutableSharedFlow<String>()
+    val message = _message.asSharedFlow()
 
     init {
         getMyReservations()
@@ -31,7 +33,7 @@ class MyReservationsViewModel @Inject constructor(
             result.onSuccess { reservations ->
                 _reservations.value = reservations.filter { it.status == "ACTIVE" }
             }.onFailure { error ->
-                _message.value = error.message ?: "Не удалось загрузить брони"
+                _message.emit(error.message ?: "Не удалось загрузить брони")
             }
         }
     }
@@ -43,12 +45,8 @@ class MyReservationsViewModel @Inject constructor(
             result.onSuccess {
                 _reservations.value = _reservations.value.filter { it.id != id }
             }.onFailure { error ->
-                _message.value = error.message ?: "Не удалось отменить бронь"
+                _message.emit(error.message ?: "Не удалось отменить бронь")
             }
         }
-    }
-
-    fun clearMessage() {
-        _message.value = null
     }
 }

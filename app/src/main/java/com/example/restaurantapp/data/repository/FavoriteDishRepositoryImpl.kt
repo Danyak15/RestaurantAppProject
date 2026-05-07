@@ -131,16 +131,19 @@ class FavoriteDishRepositoryImpl @Inject constructor(
 
             Result.success(Unit)
         } catch (_: Exception) {
-            favoriteSyncScheduler.schedule()
+            if (sessionManager.isAuthorized()) {
+                favoriteSyncScheduler.schedule()
+            }
+
             Result.success(Unit)
         }
     }
 
     override suspend fun pushFavorites(): Result<Unit> {
         return try {
-            networkHelper.checkInternetConnection()
-
             val userId = getCurrentUserId()
+
+            networkHelper.checkInternetConnection()
 
             val tasks = favoriteSyncDao.getTasks(userId)
             var allSuccessful = true
@@ -166,16 +169,19 @@ class FavoriteDishRepositoryImpl @Inject constructor(
                 Result.failure(Exception("Не все изменения были обработаны"))
             }
         } catch (e: Exception) {
-            favoriteSyncScheduler.schedule()
+            if (sessionManager.isAuthorized()) {
+                favoriteSyncScheduler.schedule()
+            }
+
             Result.failure(e)
         }
     }
 
     override suspend fun pullFavorites(): Result<Unit> {
         return try {
-            networkHelper.checkInternetConnection()
-
             val userId = getCurrentUserId()
+
+            networkHelper.checkInternetConnection()
 
             val response = favoriteApi.getFavoriteDishes()
 

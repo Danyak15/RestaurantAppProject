@@ -33,11 +33,15 @@ class DishDetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         val dishId = args.dishId
-
         binding.btnFavorite.isVisible = viewModel.isFavoriteVisible
 
+        observeViewModel()
+        setupClicks()
+        viewModel.loadDishDetails(dishId)
+    }
+
+    private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
@@ -46,6 +50,7 @@ class DishDetailsFragment : Fragment() {
                         binding.executePendingBindings()
                     }
                 }
+
                 launch {
                     viewModel.isFavorite.collect { isFavorite ->
                         binding.btnFavorite.isSelected = isFavorite
@@ -53,9 +58,9 @@ class DishDetailsFragment : Fragment() {
                 }
             }
         }
+    }
 
-        viewModel.loadDishDetails(dishId)
-
+    private fun setupClicks() {
         binding.btnFavorite.setOnClickListener {
             viewModel.toggleFavorite()
         }

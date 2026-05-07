@@ -19,8 +19,10 @@ import kotlinx.coroutines.launch
 class MyReservationsFragment : Fragment() {
     private var _binding: FragmentMyReservationsBinding? = null
     private val binding get() = _binding!!
-    private val adapter = MyReservationsAdapter { reservation ->
-        viewModel.cancelReservation(reservation.id)
+    private val adapter: MyReservationsAdapter by lazy {
+        MyReservationsAdapter { reservation ->
+            viewModel.cancelReservation(reservation.id)
+        }
     }
 
     private val viewModel: MyReservationsViewModel by viewModels()
@@ -54,10 +56,7 @@ class MyReservationsFragment : Fragment() {
 
                 launch {
                     viewModel.message.collect { message ->
-                        if (message != null) {
-                            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-                            viewModel.clearMessage()
-                        }
+                        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -65,7 +64,8 @@ class MyReservationsFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
+        binding.rvReservations.adapter = null
         _binding = null
+        super.onDestroyView()
     }
 }

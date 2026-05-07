@@ -6,8 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.restaurantapp.databinding.FragmentInfoBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class InfoFragment : Fragment() {
@@ -25,18 +29,25 @@ class InfoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val restaurantId = arguments?.getInt("restaurantId") ?: 0
+        val restaurantId = arguments?.getInt("restaurantId") ?: return
 
-        viewModel.restaurant.observe(viewLifecycleOwner) { restaurant ->
-            binding.restaurant = restaurant
-            binding.executePendingBindings()
-        }
-
+        observeViewModel()
         viewModel.loadRestaurant(restaurantId)
     }
 
+    private fun observeViewModel() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.restaurant.collect { restaurant ->
+                    binding.restaurant = restaurant
+                    binding.executePendingBindings()
+                }
+            }
+        }
+    }
+
     override fun onDestroyView() {
-        super.onDestroyView()
         _binding = null
+        super.onDestroyView()
     }
 }

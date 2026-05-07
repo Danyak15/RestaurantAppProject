@@ -2,8 +2,8 @@
 <layout>
     <data>
         <variable
-            name="viewModel"
-            type="com.example.restaurantapp.presentation.profile.ProfileViewModel" />
+            name="user"
+            type="com.example.restaurantapp.domain.model.User" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Имя"
-            android:text="@{viewModel.user.name}"
+            android:text="@{user.name}"
             android:inputType="textPersonName"
             android:layout_marginTop="32dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Фамилия"
-            android:text="@{viewModel.user.surname}"
+            android:text="@{user.surname}"
             android:inputType="textPersonName"
             android:layout_marginTop="16dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -43,7 +43,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Email"
-            android:text="@{viewModel.user.email}"
+            android:text="@{user.email}"
             android:inputType="textEmailAddress"
             android:layout_marginTop="16dp"
             app:layout_constraintEnd_toEndOf="parent"

@@ -23,15 +23,17 @@ import kotlinx.coroutines.launch
 class ReservationFragment : Fragment() {
     private var _binding: FragmentReservationBinding? = null
     private val binding get() = _binding!!
-
-    private val dateAdapter = DateSlotAdapter { date ->
-        viewModel.selectDate(date)
-    }
-    private val timeAdapter = TimeSlotAdapter { time ->
-        viewModel.selectTime(time)
-    }
-
     private val viewModel: ReservationViewModel by viewModels()
+    private val dateAdapter: DateSlotAdapter by lazy {
+        DateSlotAdapter { date ->
+            viewModel.selectDate(date)
+        }
+    }
+    private val timeAdapter: TimeSlotAdapter by lazy {
+        TimeSlotAdapter { time ->
+            viewModel.selectTime(time)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,7 +46,7 @@ class ReservationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val restaurantId = arguments?.getInt("restaurantId") ?: 0
+        val restaurantId = arguments?.getInt("restaurantId") ?: return
         viewModel.loadRestaurant(restaurantId)
 
         setupRecyclerViews()
@@ -107,6 +109,9 @@ class ReservationFragment : Fragment() {
 
                 launch {
                     viewModel.timeSlots.collect { slots ->
+                        binding.rvTimePicker.isVisible = slots.isNotEmpty()
+                        binding.tvEmptyTime.isVisible = slots.isEmpty()
+
                         timeAdapter.submitList(slots) {
                             binding.rvTimePicker.scrollToPosition(0)
                         }
@@ -139,12 +144,14 @@ class ReservationFragment : Fragment() {
                 }
 
                 launch {
+                    viewModel.reservationSuccess.collect {
+                        findNavController().popBackStack()
+                    }
+                }
+
+                launch {
                     viewModel.message.collect { message ->
-                        message?.let {
-                            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-                            viewModel.clearMessage()
-                            findNavController().popBackStack()
-                        }
+                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -169,7 +176,9 @@ class ReservationFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
+        binding.rvDatePicker.adapter = null
+        binding.rvTimePicker.adapter = null
         _binding = null
+        super.onDestroyView()
     }
 }

@@ -8,25 +8,32 @@ import android.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.restaurantapp.databinding.FragmentMenuCategoriesBinding
 import com.example.restaurantapp.presentation.details.RestaurantDetailsFragmentDirections
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MenuCategoriesFragment : Fragment() {
     private var _binding: FragmentMenuCategoriesBinding? = null
     private val binding get() = _binding!!
     private val viewModel: MenuCategoriesViewModel by viewModels()
-    private val categoriesAdapter by lazy {
+    private val categoriesAdapter: MenuCategoriesAdapter by lazy {
         MenuCategoriesAdapter { category ->
             val action = RestaurantDetailsFragmentDirections
-                .actionRestaurantDetailsFragmentToDishesFragment(category.id, category.name)
+                .actionRestaurantDetailsFragmentToDishesFragment(
+                    category.id,
+                    category.name
+                )
+
             findNavController().navigate(action)
         }
     }
-    private val dishesAdapter by lazy {
+    private val dishesAdapter: DishesAdapter by lazy {
         DishesAdapter { dish ->
             val action = RestaurantDetailsFragmentDirections
                 .actionRestaurantDetailsFragmentToDishDetailsFragment(dish.id)
@@ -44,14 +51,45 @@ class MenuCategoriesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val restaurantId = arguments?.getInt("restaurantId") ?: return
+        
+        setupRecyclerViews()
+        setupSearchView()
+        observeViewModel()
+        viewModel.loadCategories(restaurantId)
+    }
 
-        val restaurantId = arguments?.getInt("restaurantId") ?: 0
-
-        binding.recyclerViewCategories.adapter = categoriesAdapter
+    private fun setupRecyclerViews() {
+        binding.rvCategories.adapter = categoriesAdapter
         binding.rvFoundDishes.adapter = dishesAdapter
-        binding.recyclerViewCategories.layoutManager = LinearLayoutManager(context)
-        binding.rvFoundDishes.layoutManager = LinearLayoutManager(context)
+    }
 
+    private fun observeViewModel() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.categories.collect { categories ->
+                        categoriesAdapter.submitList(categories)
+                    }
+                }
+
+                launch {
+                    viewModel.searchText.collect {
+                        updateSearchMode()
+                    }
+                }
+
+                launch {
+                    viewModel.foundDishes.collect { dishes ->
+                        dishesAdapter.submitList(dishes)
+                        updateSearchMode()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun setupSearchView() {
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(searchText: String?): Boolean {
                 viewModel.onSearchTextChanged(searchText.orEmpty())
@@ -64,37 +102,24 @@ class MenuCategoriesFragment : Fragment() {
                 return true
             }
         })
-
-        viewModel.categories.observe(viewLifecycleOwner) { categories ->
-            categoriesAdapter.submitList(categories)
-        }
-
-        viewModel.foundDishes.observe(viewLifecycleOwner) { dishes ->
-            dishesAdapter.submitList(dishes)
-            updateSearchMode()
-        }
-
-        viewModel.searchText.observe(viewLifecycleOwner) {
-            updateSearchMode()
-        }
-
-        viewModel.loadCategories(restaurantId)
     }
 
     private fun updateSearchMode() {
-        val searchText = viewModel.searchText.value.orEmpty()
-        val dishes = viewModel.foundDishes.value.orEmpty()
+        val searchText = viewModel.searchText.value
+        val dishes = viewModel.foundDishes.value
 
         val isSearchMode = searchText.isNotBlank()
         val hasResults = dishes.isNotEmpty()
 
-        binding.recyclerViewCategories.isVisible = !isSearchMode
+        binding.rvCategories.isVisible = !isSearchMode
         binding.rvFoundDishes.isVisible = isSearchMode && hasResults
         binding.tvEmptySearch.isVisible = isSearchMode && !hasResults
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
+        binding.rvFoundDishes.adapter = null
+        binding.rvCategories.adapter = null
         _binding = null
+        super.onDestroyView()
     }
 }

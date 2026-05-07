@@ -23,10 +23,14 @@ import kotlinx.coroutines.launch
 class FavoriteDishesFragment : Fragment() {
     private var _binding: FragmentFavoriteDishesBinding? = null
     private val binding get() = _binding!!
-
-    private lateinit var dishesAdapter: FavoriteDishesAdapter
-
     private val viewModel: FavoriteDishesViewModel by viewModels()
+    private val favoritesAdapter: FavoriteDishesAdapter by lazy {
+        FavoriteDishesAdapter { dish ->
+            val action = FavoriteDishesFragmentDirections
+                .actionFavoriteDishesFragmentToDishDetailsFragment(dish.id)
+            findNavController().navigate(action)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,15 +49,9 @@ class FavoriteDishesFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        dishesAdapter = FavoriteDishesAdapter { dish ->
-            val action = FavoriteDishesFragmentDirections
-                .actionFavoriteDishesFragmentToDishDetailsFragment(dish.id)
-            findNavController().navigate(action)
-        }
-
         binding.rvFavoriteDishes.apply {
-            adapter = dishesAdapter
             layoutManager = GridLayoutManager(context, 2)
+            this.adapter = favoritesAdapter
         }
     }
 
@@ -61,9 +59,11 @@ class FavoriteDishesFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.favoriteDishes.collect { dishes ->
-                    dishesAdapter.submitList(dishes)
-                    binding.tvNoFavorites.isVisible = dishes.isEmpty()
+                    favoritesAdapter.submitList(dishes)
+
+                    binding.rvFavoriteDishes.isVisible = dishes.isNotEmpty()
                     binding.spinnerRestaurants.isVisible = dishes.isNotEmpty()
+                    binding.tvNoFavorites.isVisible = dishes.isEmpty()
                 }
             }
         }
@@ -84,7 +84,7 @@ class FavoriteDishesFragment : Fragment() {
 
         val spinnerAdapter = ArrayAdapter(
             requireContext(),
-            androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
+            android.R.layout.simple_spinner_dropdown_item,
             items
         )
 
@@ -111,7 +111,8 @@ class FavoriteDishesFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
+        binding.rvFavoriteDishes.adapter = null
         _binding = null
+        super.onDestroyView()
     }
 }

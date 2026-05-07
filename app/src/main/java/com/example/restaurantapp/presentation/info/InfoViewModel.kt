@@ -1,12 +1,13 @@
 package com.example.restaurantapp.presentation.info
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.restaurantapp.domain.model.Restaurant
 import com.example.restaurantapp.domain.repository.RestaurantsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -14,8 +15,8 @@ import javax.inject.Inject
 class InfoViewModel @Inject constructor(
     private val repository: RestaurantsRepository
 ) : ViewModel() {
-    private val _restaurant = MutableLiveData<Restaurant>()
-    val restaurant: LiveData<Restaurant> = _restaurant
+    private val _restaurant = MutableStateFlow<Restaurant?>(null)
+    val restaurant: StateFlow<Restaurant?> = _restaurant.asStateFlow()
 
     fun loadRestaurant(restaurantId: Int) {
         viewModelScope.launch {

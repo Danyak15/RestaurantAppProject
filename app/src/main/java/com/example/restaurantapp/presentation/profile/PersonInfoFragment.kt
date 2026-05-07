@@ -7,9 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.restaurantapp.databinding.FragmentPersonInfoBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class PersonInfoFragment : Fragment() {
@@ -37,38 +41,51 @@ class PersonInfoFragment : Fragment() {
     private fun setupClicks() {
         binding.btnUpdate.setOnClickListener {
             viewModel.updateMe(
-                binding.etName.text.toString().trim(),
-                binding.etSurname.text.toString().trim(),
-                binding.etEmail.text.toString().trim().takeIf { it.isNotBlank() }
+                name = binding.etName.text.toString().trim(),
+                surname = binding.etSurname.text.toString().trim(),
+                email = binding.etEmail.text.toString().trim().takeIf { it.isNotBlank() }
             )
         }
     }
 
     private fun observeViewModel() {
-        viewModel.toastMessage.observe(viewLifecycleOwner) { error ->
-            if (error != null) {
-                Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
-                viewModel.clearError()
-            }
-        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.updateSuccess.collect {
+                        Toast.makeText(
+                            requireContext(),
+                            "Профиль успешно обновлен",
+                            Toast.LENGTH_SHORT
+                        ).show()
 
-        viewModel.user.observe(viewLifecycleOwner) { user ->
-            if (user != null) {
-                binding.viewModel = viewModel
-            }
-        }
+                        findNavController().popBackStack()
+                    }
+                }
 
-        viewModel.isUpdateSuccess.observe(viewLifecycleOwner) { success ->
-            if (success) {
-                viewModel.clearSuccess()
-                Toast.makeText(requireContext(), "Профиль успешно обновлен", Toast.LENGTH_SHORT).show()
-                findNavController().popBackStack()
+                launch {
+                    viewModel.user.collect { user ->
+                        if (user != null) {
+                            binding.user = user
+                        }
+                    }
+                }
+
+                launch {
+                    viewModel.message.collect { message ->
+                        Toast.makeText(
+                            requireContext(),
+                            message,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
             }
         }
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
         _binding = null
+        super.onDestroyView()
     }
 }

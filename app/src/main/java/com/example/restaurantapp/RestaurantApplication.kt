@@ -7,6 +7,7 @@ import com.example.restaurantapp.data.local.DatabaseSeeder
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -14,6 +15,8 @@ import javax.inject.Inject
 class RestaurantApplication : Application(), Configuration.Provider {
     @Inject lateinit var databaseSeeder: DatabaseSeeder
     @Inject lateinit var workerFactory: HiltWorkerFactory
+
+    private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder()
@@ -23,7 +26,7 @@ class RestaurantApplication : Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
 
-        CoroutineScope(Dispatchers.IO).launch {
+        applicationScope.launch {
                 databaseSeeder.seedIfNeeded()
         }
     }

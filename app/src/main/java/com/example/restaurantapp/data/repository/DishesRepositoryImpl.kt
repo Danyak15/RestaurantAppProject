@@ -23,6 +23,12 @@ class DishesRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun observeDishesByRestaurantId(restaurantId: Int): Flow<List<Dish>> {
+        return dishDao.observeDishesByRestaurantId(restaurantId).map { list ->
+            list.map { it.toDomain() }
+        }
+    }
+
     override suspend fun getDishById(id: Int): Dish? {
         return dishDao.getDishById(id)?.toDomain()
     }

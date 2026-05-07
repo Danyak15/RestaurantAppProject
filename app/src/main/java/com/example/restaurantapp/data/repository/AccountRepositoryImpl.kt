@@ -2,15 +2,15 @@ package com.example.restaurantapp.data.repository
 
 import com.example.restaurantapp.data.local.auth.SessionManager
 import com.example.restaurantapp.data.local.dao.UserDao
+import com.example.restaurantapp.data.local.mapper.toDomain
 import com.example.restaurantapp.data.local.mapper.toEntity
-import com.example.restaurantapp.data.local.mapper.toResponse
 import com.example.restaurantapp.data.remote.api.AccountApi
 import com.example.restaurantapp.data.remote.dto.request.LoginRequest
 import com.example.restaurantapp.data.remote.dto.request.RegisterRequest
 import com.example.restaurantapp.data.remote.dto.request.UpdateUserRequest
 import com.example.restaurantapp.data.remote.dto.response.LoginResponse
-import com.example.restaurantapp.data.remote.dto.response.UserResponse
 import com.example.restaurantapp.data.utils.NetworkHelper
+import com.example.restaurantapp.domain.model.User
 import com.example.restaurantapp.domain.repository.AccountRepository
 import javax.inject.Inject
 
@@ -74,7 +74,7 @@ class AccountRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getMe(): Result<UserResponse> {
+    override suspend fun getMe(): Result<User> {
        if (!sessionManager.isAuthorized()) {
             return Result.failure(Exception("Пользователь не авторизован"))
        }
@@ -87,12 +87,12 @@ class AccountRepositoryImpl @Inject constructor(
 
             if (response.isSuccessful && body != null) {
                 userDao.saveUser(body.toEntity())
-                Result.success(body)
+                Result.success(body.toDomain())
             } else {
                 val user = userDao.getCurrentUser()
 
                 if (user != null) {
-                    Result.success(user.toResponse())
+                    Result.success(user.toDomain())
                 } else {
                     Result.failure(Exception("Ошибка при получении пользователя: ${response.code()}"))
                 }
@@ -101,7 +101,7 @@ class AccountRepositoryImpl @Inject constructor(
             val user = userDao.getCurrentUser()
 
             if (user != null) {
-                Result.success(user.toResponse())
+                Result.success(user.toDomain())
             } else {
                 Result.failure(e)
             }
@@ -112,7 +112,7 @@ class AccountRepositoryImpl @Inject constructor(
         name: String,
         surname: String,
         email: String?
-    ): Result<UserResponse> {
+    ): Result<User> {
         if (!sessionManager.isAuthorized()) {
             return Result.failure(Exception("Пользователь не авторизован"))
         }
@@ -132,7 +132,7 @@ class AccountRepositoryImpl @Inject constructor(
 
             if (response.isSuccessful && body != null) {
                 userDao.saveUser(body.toEntity())
-                Result.success(body)
+                Result.success(body.toDomain())
             } else {
                 Result.failure(Exception("Ошибка при изменении данных: ${response.code()}"))
             }

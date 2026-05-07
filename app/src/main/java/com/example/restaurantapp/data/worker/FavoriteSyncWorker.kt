@@ -19,7 +19,7 @@ class FavoriteSyncWorker @AssistedInject constructor(
             val result = favoriteDishRepository.pushFavorites()
 
             if (result.isSuccess) Result.success() else Result.retry()
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             Result.retry()
         }
     }

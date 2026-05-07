@@ -183,6 +183,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_choose_time" />
 
+        <TextView
+            android:id="@+id/tv_empty_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Все столики в этот день заняты"
+            android:textSize="20sp"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@+id/tv_choose_time" />
+
+
         <Button
             android:id="@+id/btn_create_reservation"
             android:layout_width="match_parent"
