@@ -52,6 +52,7 @@ class ReservationFragment : Fragment() {
         setupRecyclerViews()
         setupClicks()
         observeViewModel()
+        observeMessage()
     }
 
     private fun setupRecyclerViews() {
@@ -148,11 +149,15 @@ class ReservationFragment : Fragment() {
                         findNavController().popBackStack()
                     }
                 }
+            }
+        }
+    }
 
-                launch {
-                    viewModel.message.collect { message ->
-                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-                    }
+    private fun observeMessage() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                viewModel.message.collect { message ->
+                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                 }
             }
         }
