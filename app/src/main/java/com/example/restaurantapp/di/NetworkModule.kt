@@ -3,6 +3,7 @@ package com.example.restaurantapp.di
 import com.example.restaurantapp.data.local.auth.SessionManager
 import com.example.restaurantapp.data.remote.api.AccountApi
 import com.example.restaurantapp.data.remote.api.FavoriteApi
+import com.example.restaurantapp.data.remote.api.NewsApi
 import com.example.restaurantapp.data.remote.api.ReservationApi
 import dagger.Module
 import dagger.Provides
@@ -84,4 +85,10 @@ object NetworkModule {
     fun provideReservationApi(
         retrofit: Retrofit
     ): ReservationApi = retrofit.create(ReservationApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideNewsApi(
+        retrofit: Retrofit
+    ): NewsApi = retrofit.create(NewsApi::class.java)
 }

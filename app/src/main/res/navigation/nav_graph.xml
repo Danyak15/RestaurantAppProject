@@ -19,7 +19,11 @@
         android:id="@+id/newsFragment"
         android:name="com.example.restaurantapp.presentation.news.NewsFragment"
         android:label="Новости"
-        tools:layout="@layout/fragment_news" />
+        tools:layout="@layout/fragment_news" >
+        <action
+            android:id="@+id/action_newsFragment_to_newsDetailsFragment"
+            app:destination="@id/newsDetailsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.restaurantapp.presentation.profile.ProfileFragment"
@@ -137,6 +141,16 @@
         android:name="com.example.restaurantapp.presentation.reservation.MyReservationsFragment"
         android:label="fragment_my_reservations"
         tools:layout="@layout/fragment_my_reservations" />
+    <fragment
+        android:id="@+id/newsDetailsFragment"
+        android:name="com.example.restaurantapp.presentation.news.NewsDetailsFragment"
+        android:label="Детали"
+        tools:layout="@layout/fragment_news_details">
+
+        <argument
+            android:name="news"
+            app:argType="com.example.restaurantapp.domain.model.News"/>
+    </fragment>
 
 
 </navigation>

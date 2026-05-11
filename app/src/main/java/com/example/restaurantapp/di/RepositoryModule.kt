@@ -4,12 +4,14 @@ import com.example.restaurantapp.data.repository.AccountRepositoryImpl
 import com.example.restaurantapp.data.repository.CategoriesRepositoryImpl
 import com.example.restaurantapp.data.repository.DishesRepositoryImpl
 import com.example.restaurantapp.data.repository.FavoriteDishRepositoryImpl
+import com.example.restaurantapp.data.repository.NewsRepositoryImpl
 import com.example.restaurantapp.data.repository.ReservationRepositoryImpl
 import com.example.restaurantapp.data.repository.RestaurantsRepositoryImpl
 import com.example.restaurantapp.domain.repository.AccountRepository
 import com.example.restaurantapp.domain.repository.CategoriesRepository
 import com.example.restaurantapp.domain.repository.DishesRepository
 import com.example.restaurantapp.domain.repository.FavoriteDishRepository
+import com.example.restaurantapp.domain.repository.NewsRepository
 import com.example.restaurantapp.domain.repository.ReservationRepository
 import com.example.restaurantapp.domain.repository.RestaurantsRepository
 import dagger.Binds
@@ -56,4 +58,10 @@ abstract class RepositoryModule {
     abstract fun bindReservationRepository(
         impl: ReservationRepositoryImpl
     ): ReservationRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindNewsRepository(
+        impl: NewsRepositoryImpl
+    ): NewsRepository
 }
