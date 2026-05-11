@@ -80,6 +80,8 @@ class ProfileFragment : Fragment() {
                     viewModel.user.collect { user ->
                         if (user != null) {
                             binding.tvPhone.text = user.phone
+                            binding.tvPoints.text = user.loyaltyPoints.toString()
+                            binding.tvLevel.text = user.loyaltyLevel
                         }
                     }
                 }

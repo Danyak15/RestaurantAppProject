@@ -9,7 +9,9 @@ fun UserEntity.toDomain() = User(
     name = name,
     surname = surname,
     phone = phone,
-    email = email
+    email = email,
+    loyaltyPoints = loyaltyPoints,
+    loyaltyLevel = loyaltyLevel
 )
 
 fun UserResponse.toEntity() = UserEntity(
@@ -17,7 +19,9 @@ fun UserResponse.toEntity() = UserEntity(
     name = name,
     surname = surname,
     phone = phone,
-    email = email
+    email = email,
+    loyaltyPoints = loyaltyPoints,
+    loyaltyLevel = loyaltyLevel
 )
 
 fun UserResponse.toDomain() = User(
@@ -25,5 +29,7 @@ fun UserResponse.toDomain() = User(
     name = name,
     surname = surname,
     phone = phone,
-    email = email
+    email = email,
+    loyaltyPoints = loyaltyPoints,
+    loyaltyLevel = loyaltyLevel
 )
