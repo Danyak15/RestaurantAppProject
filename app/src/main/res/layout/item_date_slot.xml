@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@{dateSlot.dayOfWeekName}"
-            android:textColor="@{dateSlot.isWeekend ? @color/red : @color/black}"
+            android:textColor="@{dateSlot.isWeekend ? @color/red : @color/text_secondary}"
             android:textSize="12sp"
             android:textStyle="bold"
             tools:text="Пт" />
@@ -32,10 +32,10 @@
             android:layout_marginTop="4dp"
             android:gravity="center"
             android:text="@{dateSlot.dayOfMonth}"
-            android:textColor="@{dateSlot.isSelected ? @color/white : @color/black}"
+            android:textColor="@{dateSlot.isSelected ? @color/text_primary : @color/text_secondary}"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:background="@{dateSlot.isSelected ? @drawable/bg_circle_yellow : null}"
+            android:background="@{dateSlot.isSelected ? @drawable/bg_circle_orange : null}"
             tools:text="15" />
 
     </LinearLayout>

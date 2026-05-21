@@ -1,55 +1,72 @@
 package com.example.restaurantapp
 
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
+import androidx.core.view.isVisible
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
 import com.example.restaurantapp.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.core.view.size
+import androidx.core.view.get
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private var isProgrammaticSelection = false
+    private var currentTabId = R.id.restaurantsFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         setSupportActionBar(binding.toolbar)
 
-        binding.fragmentContainerView.post {
-            val navController = binding.fragmentContainerView.findNavController()
-            val appBarConfiguration = AppBarConfiguration(
-                setOf(
-                    R.id.restaurantsFragment,
-                    R.id.newsFragment,
-                    R.id.profileFragment
-                )
-            )
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.fragment_container_view) as NavHostFragment
+        val navController = navHostFragment.navController
 
-            binding.bottomNavigationView.setupWithNavController(navController)
-            setupActionBarWithNavController(navController, appBarConfiguration)
+        val appBarConfiguration = AppBarConfiguration(
+            setOf(R.id.restaurantsFragment, R.id.newsFragment, R.id.profileFragment)
+        )
+        setupActionBarWithNavController(navController, appBarConfiguration)
 
-            navController.addOnDestinationChangedListener { _, destination, _ ->
-                when (destination.id) {
-                    R.id.loginFragment,
-                    R.id.registerFragment -> {
-                        binding.bottomNavigationView.visibility = View.GONE
-                    }
-                    else -> {
-                        binding.bottomNavigationView.visibility = View.VISIBLE
-                    }
-                }
+        binding.bottomNavigationView.setOnItemSelectedListener { item ->
+            if (isProgrammaticSelection) return@setOnItemSelectedListener true
+            NavigationUI.onNavDestinationSelected(item, navController)
+        }
+
+        val tabIds = (0 until binding.bottomNavigationView.menu.size)
+            .map { binding.bottomNavigationView.menu[it].itemId }
+            .toSet()
+
+        binding.bottomNavigationView.setOnItemSelectedListener { item ->
+            if (isProgrammaticSelection) return@setOnItemSelectedListener true
+            currentTabId = item.itemId
+            NavigationUI.onNavDestinationSelected(item, navController)
+        }
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            if (destination.id in tabIds) {
+                currentTabId = destination.id
             }
+
+            isProgrammaticSelection = true
+            binding.bottomNavigationView.selectedItemId = currentTabId
+            isProgrammaticSelection = false
+
+            binding.bottomNavigationView.isVisible = destination.id !in setOf(
+                R.id.loginFragment,
+                R.id.registerFragment
+            )
         }
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        val navController = binding.fragmentContainerView.findNavController()
-        return navController.navigateUp() || super.onSupportNavigateUp()
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.fragment_container_view) as NavHostFragment
+        return navHostFragment.navController.navigateUp() || super.onSupportNavigateUp()
     }
 }

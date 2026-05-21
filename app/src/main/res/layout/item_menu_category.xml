@@ -10,13 +10,24 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp">
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:background="?attr/selectableItemBackground">
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@{category.name}"
-            tools:text="Категория"/>
+            android:textSize="16sp"
+            tools:text="Хинкали"/>
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center_vertical"
+            android:src="@android:drawable/ic_media_play"
+            android:alpha="0.4"/>
 
     </LinearLayout>
 </layout>

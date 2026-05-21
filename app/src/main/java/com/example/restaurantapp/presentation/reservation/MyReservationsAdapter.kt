@@ -32,6 +32,18 @@ class MyReservationsAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(reservation: Reservation) {
             binding.reservation = reservation
+
+            try {
+                val dt = java.time.LocalDateTime.parse(reservation.dateTime)
+                val formatter = java.time.format.DateTimeFormatter.ofPattern(
+                    "d MMMM, HH:mm",
+                    java.util.Locale("ru")
+                )
+                binding.tvDateTime.text = dt.format(formatter)
+            } catch (_: Exception) {
+                binding.tvDateTime.text = reservation.dateTime
+            }
+
             binding.executePendingBindings()
 
             itemView.setOnClickListener {

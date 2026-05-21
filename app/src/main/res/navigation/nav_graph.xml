@@ -83,7 +83,7 @@
     <fragment
         android:id="@+id/dishDetailsFragment"
         android:name="com.example.restaurantapp.presentation.menu.DishDetailsFragment"
-        android:label="fragment_dish_details"
+        android:label="Блюдо"
         tools:layout="@layout/fragment_dish_details">
 
         <argument
@@ -93,7 +93,7 @@
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.restaurantapp.presentation.profile.LoginFragment"
-        android:label="fragment_login"
+        android:label="Вход"
         tools:layout="@layout/fragment_login" >
         <action
             android:id="@+id/action_loginFragment_to_registerFragment"
@@ -109,7 +109,7 @@
     <fragment
         android:id="@+id/registerFragment"
         android:name="com.example.restaurantapp.presentation.profile.RegisterFragment"
-        android:label="fragment_register"
+        android:label="Регистрация"
         tools:layout="@layout/fragment_register" >
         <action
             android:id="@+id/action_registerFragment_to_loginFragment"
@@ -139,7 +139,7 @@
     <fragment
         android:id="@+id/myReservationsFragment"
         android:name="com.example.restaurantapp.presentation.reservation.MyReservationsFragment"
-        android:label="fragment_my_reservations"
+        android:label="Мои брони"
         tools:layout="@layout/fragment_my_reservations" />
     <fragment
         android:id="@+id/newsDetailsFragment"

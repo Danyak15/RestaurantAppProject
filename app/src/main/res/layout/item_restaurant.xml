@@ -8,53 +8,104 @@
             name="restaurant"
             type="com.example.restaurantapp.domain.model.Restaurant" />
     </data>
-    
+
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="4dp">
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="6dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/iv_restaurant"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="160dp"
+                android:scaleType="centerCrop"
+                android:src="@android:drawable/ic_menu_manage"
                 android:contentDescription="Фото ресторана"
-                android:src="@android:drawable/ic_menu_manage" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{Double.toString(restaurant.rating)}"
-                tools:text="Рейтинг"
-                app:layout_constraintBottom_toTopOf="@+id/textView"
+                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <View
+                android:id="@+id/overlay"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:background="#99000000"
+                app:layout_constraintTop_toTopOf="@id/iv_restaurant"
+                app:layout_constraintBottom_toBottomOf="@id/iv_restaurant"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
             <TextView
-                android:id="@+id/textView"
+                android:id="@+id/tv_rating"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:background="#CCF5A623"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:text="@{`★ ` + Double.toString(restaurant.rating)}"
+                android:textColor="@color/text_primary"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="★ 4.8" />
+
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"
+                android:layout_marginBottom="4dp"
                 android:text="@{restaurant.name}"
-                tools:text="Ресторан"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:textColor="@color/text_primary"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/iv_restaurant"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                tools:text="Угли-Угли" />
 
             <TextView
+                android:id="@+id/tv_cuisine"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{restaurant.address}"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="8dp"
+                android:text="@{restaurant.cuisine}"
+                android:textSize="13sp"
+                android:textColor="?android:attr/textColorSecondary"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView"
-                tools:text="Адрес" />
+                app:layout_constraintTop_toBottomOf="@id/iv_restaurant"
+                tools:text="Грузинская кухня" />
+
+            <TextView
+                android:id="@+id/tv_address"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="12dp"
+                android:drawablePadding="4dp"
+                android:text="@{restaurant.address}"
+                android:textSize="13sp"
+                android:textColor="?android:attr/textColorSecondary"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_cuisine"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:text="ул. Тверская, 15" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
