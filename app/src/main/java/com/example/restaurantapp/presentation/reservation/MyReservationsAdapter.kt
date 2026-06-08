@@ -7,6 +7,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.restaurantapp.databinding.ItemReservationBinding
 import com.example.restaurantapp.domain.model.Reservation
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 class MyReservationsAdapter(
     private val onItemClick: (Reservation) -> Unit
@@ -32,19 +35,15 @@ class MyReservationsAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(reservation: Reservation) {
             binding.reservation = reservation
+            binding.executePendingBindings()
 
             try {
-                val dt = java.time.LocalDateTime.parse(reservation.dateTime)
-                val formatter = java.time.format.DateTimeFormatter.ofPattern(
-                    "d MMMM, HH:mm",
-                    java.util.Locale("ru")
-                )
+                val dt = LocalDateTime.parse(reservation.dateTime)
+                val formatter = DateTimeFormatter.ofPattern("d MMMM, HH:mm", Locale("ru"))
                 binding.tvDateTime.text = dt.format(formatter)
             } catch (_: Exception) {
-                binding.tvDateTime.text = reservation.dateTime
+                binding.tvDateTime.text = reservation.dateTime.replace("T", " ")
             }
-
-            binding.executePendingBindings()
 
             itemView.setOnClickListener {
                 onItemClick(reservation)

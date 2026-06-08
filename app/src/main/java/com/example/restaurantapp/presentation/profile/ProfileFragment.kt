@@ -212,12 +212,7 @@ class ProfileFragment : Fragment() {
             return
         }
 
-        val fullUrl = if (url.startsWith("http")) {
-            url
-        } else {
-            "http://10.0.2.2:8080$url"
-            "http://192.168.0.101:8080$url"
-        }
+        val fullUrl = "http://10.0.2.2:8080$url"
 
         binding.ivAvatar.imageTintList = null
         binding.ivAvatar.setPadding(0, 0, 0, 0)
