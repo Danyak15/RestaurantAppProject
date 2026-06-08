@@ -18,7 +18,9 @@ fun RestaurantResponse.toEntity() = RestaurantEntity(
     description = description,
     rating = rating,
     phone = phone,
-    imageUrl = imageUrl
+    imageUrl = imageUrl,
+    minGuests = minGuests,
+    maxGuests = maxGuests
 )
 
 fun RestaurantResponse.toHourEntities() = workingHours.map { hours ->
@@ -42,7 +44,9 @@ fun RestaurantEntity.toDomain() = Restaurant(
     rating = rating,
     phone = phone,
     imageUrl = imageUrl,
-    workingHours = emptyList()
+    workingHours = emptyList(),
+    minGuests = minGuests,
+    maxGuests = maxGuests
 )
 
 fun RestaurantWithHours.toDomain() = restaurant.toDomain().copy(

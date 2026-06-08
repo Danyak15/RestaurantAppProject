@@ -7,6 +7,7 @@ import com.example.restaurantapp.domain.usecase.account.CheckAuthUseCase
 import com.example.restaurantapp.domain.usecase.account.GetMeUseCase
 import com.example.restaurantapp.domain.usecase.account.LogoutUseCase
 import com.example.restaurantapp.domain.usecase.account.UpdateMeUseCase
+import com.example.restaurantapp.domain.usecase.account.UploadAvatarUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,6 +16,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,7 +24,8 @@ class ProfileViewModel @Inject constructor(
     private val getMeUseCase: GetMeUseCase,
     private val updateMeUseCase: UpdateMeUseCase,
     private val checkAuthUseCase: CheckAuthUseCase,
-    private val logoutUseCase: LogoutUseCase
+    private val logoutUseCase: LogoutUseCase,
+    private val uploadAvatarUseCase: UploadAvatarUseCase
 ) : ViewModel() {
     private val _user = MutableStateFlow<User?>(null)
     val user: StateFlow<User?> = _user.asStateFlow()
@@ -61,6 +64,17 @@ class ProfileViewModel @Inject constructor(
     fun clearSession() {
         viewModelScope.launch {
             logoutUseCase()
+        }
+    }
+
+    fun uploadAvatar(file: File) {
+        viewModelScope.launch {
+            uploadAvatarUseCase(file)
+                .onSuccess { user ->
+                    _user.value = user
+                }.onFailure { error ->
+                    _message.emit(error.message ?: "Не удалось загрузить фото")
+                }
         }
     }
 }

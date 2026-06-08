@@ -2,6 +2,7 @@ package com.example.restaurantapp.domain.repository
 
 import com.example.restaurantapp.data.remote.dto.response.LoginResponse
 import com.example.restaurantapp.domain.model.User
+import java.io.File
 
 interface AccountRepository {
     suspend fun register(
@@ -23,4 +24,5 @@ interface AccountRepository {
 
     suspend fun clearSession()
     fun checkAuth(): Boolean
+    suspend fun uploadAvatar(file: File): Result<User>
 }

@@ -4,6 +4,7 @@ import com.example.restaurantapp.data.remote.dto.response.LoginResponse
 import com.example.restaurantapp.domain.model.User
 import com.example.restaurantapp.domain.repository.AccountRepository
 import com.example.restaurantapp.domain.repository.FavoriteDishRepository
+import java.io.File
 import javax.inject.Inject
 
 class RegisterUseCase @Inject constructor(
@@ -80,6 +81,18 @@ class LogoutUseCase @Inject constructor(
     suspend operator fun invoke() {
         favoriteDishRepository.clearFavorites()
         accountRepository.clearSession()
+    }
+}
+
+class UploadAvatarUseCase @Inject constructor(
+    private val accountRepository: AccountRepository
+) {
+    suspend operator fun invoke(file: File): Result<User> {
+        if (!file.exists() || file.length() == 0L) {
+            return Result.failure(IllegalArgumentException("Фото не выбрано"))
+        }
+
+        return accountRepository.uploadAvatar(file)
     }
 }
 

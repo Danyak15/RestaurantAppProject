@@ -12,6 +12,10 @@ import com.example.restaurantapp.data.remote.dto.response.LoginResponse
 import com.example.restaurantapp.data.utils.NetworkHelper
 import com.example.restaurantapp.domain.model.User
 import com.example.restaurantapp.domain.repository.AccountRepository
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
 import javax.inject.Inject
 
 class AccountRepositoryImpl @Inject constructor(
@@ -147,4 +151,32 @@ class AccountRepositoryImpl @Inject constructor(
     }
 
     override fun checkAuth(): Boolean = sessionManager.isAuthorized()
+
+    override suspend fun uploadAvatar(file: File): Result<User> {
+        if (!sessionManager.isAuthorized()) {
+            return Result.failure(Exception("Пользователь не авторизован"))
+        }
+
+        return try {
+            networkHelper.checkInternetConnection()
+
+            val requestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
+            val part = MultipartBody.Part.createFormData(
+                name = "avatar",
+                filename = file.name,
+                body = requestBody
+            )
+            val response = accountApi.uploadAvatar(part)
+            val body = response.body()
+
+            if (response.isSuccessful && body != null) {
+                userDao.saveUser(body.toEntity())
+                Result.success(body.toDomain())
+            } else {
+                Result.failure(Exception("Не удалось загрузить фото: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

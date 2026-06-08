@@ -6,9 +6,12 @@ import com.example.restaurantapp.data.remote.dto.request.RegisterRequest
 import com.example.restaurantapp.data.remote.dto.response.UserResponse
 import com.example.restaurantapp.data.remote.dto.request.UpdateUserRequest
 import retrofit2.Response
+import okhttp3.MultipartBody
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.PUT
 
 interface AccountApi {
@@ -23,4 +26,8 @@ interface AccountApi {
 
     @PUT("/api/users/me")
     suspend fun updateMe(@Body request: UpdateUserRequest): Response<UserResponse>
+
+    @Multipart
+    @PUT("/api/users/me/avatar")
+    suspend fun uploadAvatar(@Part avatar: MultipartBody.Part): Response<UserResponse>
 }

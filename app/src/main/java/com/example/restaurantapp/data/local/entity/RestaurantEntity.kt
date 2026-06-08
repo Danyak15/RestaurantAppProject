@@ -12,5 +12,7 @@ data class RestaurantEntity(
     val description: String,
     val rating: Double,
     val phone: String?,
-    val imageUrl: String
+    val imageUrl: String,
+    val minGuests: Int,
+    val maxGuests: Int
 )

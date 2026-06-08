@@ -9,5 +9,7 @@ data class Restaurant(
     val rating: Double,
     val phone: String?,
     val imageUrl: String,
-    val workingHours: List<RestaurantWorkingHours>
+    val workingHours: List<RestaurantWorkingHours>,
+    val minGuests: Int,
+    val maxGuests: Int
 )

@@ -1,5 +1,6 @@
 package com.example.restaurantapp.domain.usecase.reservation
 
+import com.example.restaurantapp.domain.model.Reservation
 import com.example.restaurantapp.domain.model.Restaurant
 import com.example.restaurantapp.domain.repository.ReservationRepository
 import java.time.LocalDate
@@ -19,14 +20,35 @@ class CreateReservationUseCase @Inject constructor(
     private val reservationRepository: ReservationRepository
 ) {
     suspend operator fun invoke(
-        restaurantId: Long,
+        restaurant: Restaurant,
         date: LocalDate,
         time: LocalTime,
         guests: Int
-    ) = reservationRepository.createReservation(
-        restaurantId = restaurantId,
-        dateTime = date.atTime(time).toString(),
-        guests = guests
+    ): Result<Reservation> {
+        if (guests !in restaurant.minGuests..restaurant.maxGuests) {
+            return Result.failure(IllegalArgumentException("Недоступное количество гостей"))
+        }
+
+        return reservationRepository.createReservation(
+            restaurantId = restaurant.id,
+            dateTime = date.atTime(time).toString(),
+            guests = guests
+        )
+    }
+}
+
+class GetInitialGuestsCountUseCase @Inject constructor() {
+    operator fun invoke(restaurant: Restaurant) = restaurant.minGuests
+}
+
+class ChangeGuestsCountUseCase @Inject constructor() {
+    operator fun invoke(
+        restaurant: Restaurant,
+        currentGuests: Int,
+        delta: Int
+    ) = (currentGuests + delta).coerceIn(
+        minimumValue = restaurant.minGuests,
+        maximumValue = restaurant.maxGuests
     )
 }
 

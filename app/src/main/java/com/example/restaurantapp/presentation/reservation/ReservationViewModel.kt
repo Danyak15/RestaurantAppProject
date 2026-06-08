@@ -3,8 +3,10 @@ package com.example.restaurantapp.presentation.reservation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.restaurantapp.domain.model.Restaurant
+import com.example.restaurantapp.domain.usecase.reservation.ChangeGuestsCountUseCase
 import com.example.restaurantapp.domain.usecase.reservation.CreateReservationUseCase
 import com.example.restaurantapp.domain.usecase.reservation.GetAvailableTimesUseCase
+import com.example.restaurantapp.domain.usecase.reservation.GetInitialGuestsCountUseCase
 import com.example.restaurantapp.domain.usecase.restaurant.GetRestaurantByIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -23,8 +25,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ReservationViewModel @Inject constructor(
+    private val changeGuestsCountUseCase: ChangeGuestsCountUseCase,
     private val createReservationUseCase: CreateReservationUseCase,
     private val getAvailableTimesUseCase: GetAvailableTimesUseCase,
+    private val getInitialGuestsCountUseCase: GetInitialGuestsCountUseCase,
     private val getRestaurantByIdUseCase: GetRestaurantByIdUseCase
 ) : ViewModel() {
     private val _restaurant = MutableStateFlow<Restaurant?>(null)
@@ -65,7 +69,12 @@ class ReservationViewModel @Inject constructor(
 
     fun loadRestaurant(id: Long) {
         viewModelScope.launch {
-            _restaurant.value = getRestaurantByIdUseCase(id)
+            val restaurant = getRestaurantByIdUseCase(id)
+            _restaurant.value = restaurant
+
+            if (restaurant != null) {
+                _guests.value = getInitialGuestsCountUseCase(restaurant)
+            }
 
             selectedDate.value?.let { date ->
                 loadTimeSlots(date)
@@ -92,30 +101,24 @@ class ReservationViewModel @Inject constructor(
     }
 
     fun incrementGuests() {
-        if (_guests.value < 8) {
-            _guests.value++
-            selectedDate.value?.let { loadTimeSlots(it) }
-        }
+        updateGuests(delta = 1)
     }
 
     fun decrementGuests() {
-        if (_guests.value > 1) {
-            _guests.value--
-            selectedDate.value?.let { loadTimeSlots(it) }
-        }
+        updateGuests(delta = -1)
     }
 
     fun createReservation() {
         val guests = guests.value
         val date = selectedDate.value ?: return
         val time = selectedTime.value ?: return
-        val restaurantId = restaurant.value?.id ?: return
+        val restaurant = restaurant.value ?: return
 
         viewModelScope.launch {
             _isLoading.value = true
 
             val result = createReservationUseCase(
-                restaurantId = restaurantId,
+                restaurant = restaurant,
                 date = date,
                 time = time,
                 guests = guests
@@ -163,6 +166,20 @@ class ReservationViewModel @Inject constructor(
                 _timeSlots.value = emptyList()
                 selectedTime.value = null
             }
+        }
+    }
+
+    private fun updateGuests(delta: Int) {
+        val restaurant = restaurant.value ?: return
+        val updatedGuests = changeGuestsCountUseCase(
+            restaurant = restaurant,
+            currentGuests = _guests.value,
+            delta = delta
+        )
+
+        if (updatedGuests != _guests.value) {
+            _guests.value = updatedGuests
+            selectedDate.value?.let { loadTimeSlots(it) }
         }
     }
 }
