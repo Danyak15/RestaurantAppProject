@@ -32,10 +32,10 @@
             android:layout_marginTop="4dp"
             android:gravity="center"
             android:text="@{dateSlot.dayOfMonth}"
-            android:textColor="@{dateSlot.isSelected ? @color/text_primary : @color/text_secondary}"
+            android:textColor="@{dateSlot.isSelected ? @color/white : @color/text_secondary}"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:background="@{dateSlot.isSelected ? @drawable/bg_circle_orange : null}"
+            android:background="@{dateSlot.isSelected ? @drawable/bg_circle_black : null}"
             tools:text="15" />
 
     </LinearLayout>

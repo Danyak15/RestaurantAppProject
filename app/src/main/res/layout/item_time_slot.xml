@@ -24,7 +24,7 @@
             android:gravity="center"
             android:text="@{timeSlot.time.toString()}"
             tools:text="12:00"
-            android:textColor="@{timeSlot.isSelected ? @color/text_primary : @color/text_secondary}"
+            android:textColor="@{timeSlot.isSelected ? @color/white : @color/text_secondary}"
             android:textSize="14sp"
             android:textStyle="bold"
             android:background="@{timeSlot.isSelected ? @color/accent_primary : @color/bg_primary}" />
