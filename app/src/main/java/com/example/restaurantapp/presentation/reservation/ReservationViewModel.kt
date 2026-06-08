@@ -3,8 +3,9 @@ package com.example.restaurantapp.presentation.reservation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.restaurantapp.domain.model.Restaurant
-import com.example.restaurantapp.domain.repository.ReservationRepository
-import com.example.restaurantapp.domain.repository.RestaurantsRepository
+import com.example.restaurantapp.domain.usecase.reservation.CreateReservationUseCase
+import com.example.restaurantapp.domain.usecase.reservation.GetAvailableTimesUseCase
+import com.example.restaurantapp.domain.usecase.restaurant.GetRestaurantByIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,8 +23,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ReservationViewModel @Inject constructor(
-    private val reservationRepository: ReservationRepository,
-    private val restaurantRepository: RestaurantsRepository
+    private val createReservationUseCase: CreateReservationUseCase,
+    private val getAvailableTimesUseCase: GetAvailableTimesUseCase,
+    private val getRestaurantByIdUseCase: GetRestaurantByIdUseCase
 ) : ViewModel() {
     private val _restaurant = MutableStateFlow<Restaurant?>(null)
     val restaurant: StateFlow<Restaurant?> = _restaurant.asStateFlow()
@@ -63,7 +65,7 @@ class ReservationViewModel @Inject constructor(
 
     fun loadRestaurant(id: Long) {
         viewModelScope.launch {
-            _restaurant.value = restaurantRepository.getRestaurantById(id)
+            _restaurant.value = getRestaurantByIdUseCase(id)
 
             selectedDate.value?.let { date ->
                 loadTimeSlots(date)
@@ -109,14 +111,13 @@ class ReservationViewModel @Inject constructor(
         val time = selectedTime.value ?: return
         val restaurantId = restaurant.value?.id ?: return
 
-        val dateTimeString = date.atTime(time).toString()
-
         viewModelScope.launch {
             _isLoading.value = true
 
-            val result = reservationRepository.createReservation(
+            val result = createReservationUseCase(
                 restaurantId = restaurantId,
-                dateTime = dateTimeString,
+                date = date,
+                time = time,
                 guests = guests
             )
 
@@ -144,30 +145,17 @@ class ReservationViewModel @Inject constructor(
     }
 
     private fun loadTimeSlots(date: LocalDate) {
-        val restaurantId = restaurant.value?.id ?: return
+        val restaurant = restaurant.value ?: return
         val guestsCount = guests.value
-        val workingHours = getWorkingHoursForDate(date)
-
-        if (workingHours.isClosed) {
-            _timeSlots.value = emptyList()
-            selectedTime.value = null
-            return
-        }
 
         viewModelScope.launch {
-            val result = reservationRepository.getAvailableTimes(
-                restaurantId = restaurantId,
-                date = date.toString(),
+            getAvailableTimesUseCase(
+                restaurant = restaurant,
+                date = date,
                 guests = guestsCount
-            )
-
-            result.onSuccess { times ->
-                val filteredTimes = filterTimesByWorkingHours(times, date)
-
-                _timeSlots.value = filteredTimes.map { time ->
-                    TimeSlotModel(
-                        time = LocalTime.parse(time)
-                    )
+            ).onSuccess { times ->
+                _timeSlots.value = times.map { time ->
+                    TimeSlotModel(time = time)
                 }
                 selectedTime.value = null
             }.onFailure { error ->
@@ -177,25 +165,4 @@ class ReservationViewModel @Inject constructor(
             }
         }
     }
-
-    private fun filterTimesByWorkingHours(times: List<String>, date: LocalDate): List<String> {
-        val hours = getWorkingHoursForDate(date)
-
-        if (hours.isClosed) {
-            return emptyList()
-        }
-
-        val openTime = hours.openTime!!
-        val closeTime = hours.closeTime!!
-
-        return times.filter { time ->
-            val parsedTime = LocalTime.parse(time)
-
-            !parsedTime.isBefore(openTime) && parsedTime.isBefore(closeTime)
-        }
-    }
-
-    private fun getWorkingHoursForDate(date: LocalDate) = restaurant.value!!
-        .workingHours
-        .first { it.dayOfWeek == date.dayOfWeek }
 }

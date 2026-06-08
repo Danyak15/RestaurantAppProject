@@ -4,8 +4,8 @@ import com.example.restaurantapp.domain.model.Dish
 import kotlinx.coroutines.flow.Flow
 
 interface DishesRepository {
-    fun getDishesByCategoryId(categoryId: Long): Flow<List<Dish>>
+    suspend fun getDishesByCategoryId(categoryId: Long): List<Dish>
+    suspend fun getDishesByRestaurantId(restaurantId: Long): List<Dish>
     fun observeDishesByIds(ids: List<Long>): Flow<List<Dish>>
-    fun observeDishesByRestaurantId(restaurantId: Long): Flow<List<Dish>>
     suspend fun getDishById(id: Long): Dish?
 }

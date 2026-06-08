@@ -8,13 +8,12 @@ import androidx.room.Transaction
 import com.example.restaurantapp.data.local.entity.RestaurantHoursEntity
 import com.example.restaurantapp.data.local.entity.RestaurantEntity
 import com.example.restaurantapp.data.local.entity.RestaurantWithHours
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RestaurantDao {
     @Transaction
     @Query("SELECT * FROM restaurants")
-    fun getRestaurantsWithHours(): Flow<List<RestaurantWithHours>>
+    suspend fun getRestaurantsWithHours(): List<RestaurantWithHours>
 
     @Transaction
     @Query("SELECT * FROM restaurants WHERE id = :id")

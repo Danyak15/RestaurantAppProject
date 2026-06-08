@@ -2,7 +2,8 @@ package com.example.restaurantapp.presentation.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.restaurantapp.domain.repository.AccountRepository
+import com.example.restaurantapp.domain.usecase.account.LoginUseCase
+import com.example.restaurantapp.domain.usecase.account.RegisterUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -12,7 +13,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val accountRepository: AccountRepository
+    private val loginUseCase: LoginUseCase,
+    private val registerUseCase: RegisterUseCase
 ) : ViewModel() {
     private val _authSuccess = MutableSharedFlow<Unit>()
     val authSuccess: SharedFlow<Unit> = _authSuccess.asSharedFlow()
@@ -21,19 +23,9 @@ class AuthViewModel @Inject constructor(
     val message: SharedFlow<String> = _message.asSharedFlow()
 
     fun login(phone: String, password: String) {
-        if (phone.isBlank() || password.isBlank()) {
-            _message.tryEmit("Заполни пустые поля")
-            return
-        }
-
-        val normalizedPhone = getNormalizedPhone(phone) ?: run {
-            _message.tryEmit("Неверный номер")
-            return
-        }
-
         viewModelScope.launch {
-            accountRepository.login(normalizedPhone, password)
-               .onSuccess {
+            loginUseCase(phone, password)
+                .onSuccess {
                     _authSuccess.emit(Unit)
                 }.onFailure { error ->
                     _message.emit(error.message ?: "Ошибка при входе")
@@ -42,40 +34,13 @@ class AuthViewModel @Inject constructor(
     }
 
     fun register(name: String, surname: String, phone: String, password: String) {
-        if (name.isBlank() || surname.isBlank() || phone.isBlank() || password.isBlank()) {
-            _message.tryEmit("Заполни пустые поля")
-            return
-        }
-
-        val normalizedPhone = getNormalizedPhone(phone) ?: run {
-            _message.tryEmit("Неверный номер")
-            return
-        }
-
         viewModelScope.launch {
-            val registerResult = accountRepository.register(name, surname, normalizedPhone, password)
-
-            registerResult.onSuccess {
-                val loginResult = accountRepository.login(normalizedPhone, password)
-
-                loginResult.onSuccess {
+            registerUseCase(name, surname, phone, password)
+                .onSuccess {
                     _authSuccess.emit(Unit)
                 }.onFailure { error ->
-                    _message.emit(error.message ?: "Ошибка при входе после регистрации")
+                    _message.emit(error.message ?: "Ошибка при регистрации")
                 }
-            }.onFailure { error ->
-                _message.emit(error.message ?: "Ошибка при регистрации")
-            }
-        }
-    }
-
-    private fun getNormalizedPhone(phone: String): String? {
-        val digits = phone.filter { it.isDigit() }
-
-        return if (digits.length != 10) {
-            null
-        } else {
-            "+7$digits"
         }
     }
 }

@@ -7,7 +7,6 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.time.LocalDateTime
-import java.time.ZoneId
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -55,12 +54,13 @@ class ReservationReminderScheduler @Inject constructor(
     ) {
         val triggerTime = dateTime.minusMinutes(minutesBefore.toLong())
 
-        if (!triggerTime.isAfter(now)) return
+        if (!dateTime.isAfter(now)) return
 
-        val delayMillis = triggerTime
-            .atZone(ZoneId.systemDefault())
-            .toInstant()
-            .toEpochMilli() - System.currentTimeMillis()
+        val delayMillis = if (triggerTime.isAfter(now)) {
+            java.time.Duration.between(now, triggerTime).toMillis()
+        } else {
+            0L
+        }
 
         val inputData = Data.Builder()
             .putLong(ReservationReminderWorker.KEY_RESERVATION_ID, reservationId)

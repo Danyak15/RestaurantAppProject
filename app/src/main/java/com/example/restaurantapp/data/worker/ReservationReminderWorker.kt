@@ -9,6 +9,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import com.example.restaurantapp.R
 
 @HiltWorker
 class ReservationReminderWorker @AssistedInject constructor(
@@ -73,6 +74,7 @@ class ReservationReminderWorker @AssistedInject constructor(
         val text = "Столик на $guests чел. — $formattedTime (через $minutesBefore мин.)"
 
         val notification = NotificationCompat.Builder(appContext, CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_restaurant_placeholder)
             .setContentTitle(title)
             .setContentText(text)
             .setStyle(NotificationCompat.BigTextStyle().bigText(text))

@@ -3,8 +3,10 @@ package com.example.restaurantapp.presentation.menu
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.restaurantapp.domain.model.Dish
-import com.example.restaurantapp.domain.repository.DishesRepository
-import com.example.restaurantapp.domain.repository.FavoriteDishRepository
+import com.example.restaurantapp.domain.usecase.favorite.IsFavoriteAuthorizedUseCase
+import com.example.restaurantapp.domain.usecase.favorite.ObserveIsFavoriteUseCase
+import com.example.restaurantapp.domain.usecase.favorite.ToggleFavoriteUseCase
+import com.example.restaurantapp.domain.usecase.menu.GetDishByIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,8 +21,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DishDetailsViewModel @Inject constructor(
-    private val dishesRepository: DishesRepository,
-    private val favoriteDishRepository: FavoriteDishRepository
+    private val getDishByIdUseCase: GetDishByIdUseCase,
+    private val observeIsFavoriteUseCase: ObserveIsFavoriteUseCase,
+    private val isFavoriteAuthorizedUseCase: IsFavoriteAuthorizedUseCase,
+    private val toggleFavoriteUseCase: ToggleFavoriteUseCase
 ) : ViewModel() {
     private val _selectedDishId = MutableStateFlow<Long?>(null)
 
@@ -28,7 +32,7 @@ class DishDetailsViewModel @Inject constructor(
     val dish: StateFlow<Dish?> = _selectedDishId
         .filterNotNull()
         .mapLatest { dishId ->
-            dishesRepository.getDishById(dishId)
+            getDishByIdUseCase(dishId)
         }
         .stateIn(
             scope = viewModelScope,
@@ -40,7 +44,7 @@ class DishDetailsViewModel @Inject constructor(
     val isFavorite: StateFlow<Boolean> = _selectedDishId
         .filterNotNull()
         .flatMapLatest { dishId ->
-            favoriteDishRepository.observeIsFavorite(dishId)
+            observeIsFavoriteUseCase(dishId)
         }
         .stateIn(
             scope = viewModelScope,
@@ -48,7 +52,7 @@ class DishDetailsViewModel @Inject constructor(
             initialValue = false
         )
 
-    val isFavoriteVisible: Boolean = favoriteDishRepository.isAuthorized()
+    val isFavoriteVisible: Boolean = isFavoriteAuthorizedUseCase()
 
     fun loadDishDetails(dishId: Long) {
         _selectedDishId.value = dishId
@@ -56,14 +60,9 @@ class DishDetailsViewModel @Inject constructor(
 
     fun toggleFavorite() {
         val dishId = _selectedDishId.value ?: return
-        val currentlyFavorite = isFavorite.value
 
         viewModelScope.launch {
-            if (currentlyFavorite) {
-                favoriteDishRepository.removeFromFavorites(dishId)
-            } else {
-                favoriteDishRepository.addToFavorites(dishId)
-            }
+            toggleFavoriteUseCase(dishId, isFavorite.value)
         }
     }
 }

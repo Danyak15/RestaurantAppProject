@@ -5,12 +5,11 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.restaurantapp.data.local.entity.CategoryEntity
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CategoryDao {
     @Query("SELECT * FROM categories WHERE restaurantId = :restaurantId")
-    fun getCategoriesByRestaurantId(restaurantId: Long): Flow<List<CategoryEntity>>
+    suspend fun getCategoriesByRestaurantId(restaurantId: Long): List<CategoryEntity>
 
     @Query("SELECT * FROM categories WHERE id = :id")
     suspend fun getCategoryById(id: Long): CategoryEntity?

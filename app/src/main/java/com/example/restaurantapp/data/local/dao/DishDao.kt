@@ -16,11 +16,11 @@ interface DishDao {
     suspend fun getDishById(id: Long): DishEntity?
 
     @Query("SELECT * FROM dishes WHERE categoryId = :categoryId")
-    fun getDishesByCategoryId(categoryId: Long): Flow<List<DishEntity>>
+    suspend fun getDishesByCategoryId(categoryId: Long): List<DishEntity>
 
     @Query("SELECT * FROM dishes WHERE id IN (:ids)")
     fun observeDishesByIds(ids: List<Long>): Flow<List<DishEntity>>
 
     @Query("SELECT * FROM dishes WHERE restaurantId = :restaurantId")
-    fun observeDishesByRestaurantId(restaurantId: Long): Flow<List<DishEntity>>
+    suspend fun getDishesByRestaurantId(restaurantId: Long): List<DishEntity>
 }
