@@ -113,8 +113,13 @@ class ReservationFragment : Fragment() {
                         binding.rvTimePicker.isVisible = slots.isNotEmpty()
                         binding.tvEmptyTime.isVisible = slots.isEmpty()
 
+                        val shouldResetScroll = timeAdapter.currentList.map { it.time } !=
+                                slots.map { it.time }
+
                         timeAdapter.submitList(slots) {
-                            binding.rvTimePicker.scrollToPosition(0)
+                            if (shouldResetScroll) {
+                                binding.rvTimePicker.scrollToPosition(0)
+                            }
                         }
                     }
                 }

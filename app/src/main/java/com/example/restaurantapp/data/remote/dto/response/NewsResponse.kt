@@ -5,5 +5,6 @@ data class NewsResponse(
     val restaurantId: Long?,
     val title: String,
     val content: String,
-    val createdAt: String
+    val createdAt: String,
+    val imageUrl: String
 )

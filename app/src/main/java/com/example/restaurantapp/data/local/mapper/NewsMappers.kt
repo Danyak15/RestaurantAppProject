@@ -8,5 +8,6 @@ fun NewsResponse.toDomain() = News(
     restaurantId = restaurantId,
     title = title,
     content = content,
-    createdAt = createdAt
+    createdAt = createdAt,
+    imageUrl = imageUrl
 )

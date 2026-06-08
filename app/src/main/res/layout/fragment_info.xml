@@ -15,12 +15,17 @@
 
         <ImageView
             android:id="@+id/image_view_restaurant"
-            android:layout_width="match_parent"
-            android:layout_height="160dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@color/bg_elevated"
+            android:scaleType="centerCrop"
             app:imageUrl="@{restaurant.imageUrl}"
+            app:layout_constraintDimensionRatio="16:9"
+            app:layout_constraintBottom_toTopOf="@+id/textView4"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
         <TextView
             android:id="@+id/textView4"
