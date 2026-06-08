@@ -12,12 +12,12 @@ class RestaurantsRepositoryImpl @Inject constructor(
     private val restaurantDao: RestaurantDao
 ) : RestaurantsRepository {
     override fun getRestaurants(): Flow<List<Restaurant>> {
-        return restaurantDao.getRestaurants().map { list ->
+        return restaurantDao.getRestaurantsWithHours().map { list ->
             list.map { it.toDomain() }
         }
     }
 
     override suspend fun getRestaurantById(id: Long): Restaurant? {
-        return restaurantDao.getRestaurantById(id)?.toDomain()
+        return restaurantDao.getRestaurantWithHoursById(id)?.toDomain()
     }
 }

@@ -146,6 +146,13 @@ class ReservationViewModel @Inject constructor(
     private fun loadTimeSlots(date: LocalDate) {
         val restaurantId = restaurant.value?.id ?: return
         val guestsCount = guests.value
+        val workingHours = getWorkingHoursForDate(date)
+
+        if (workingHours.isClosed) {
+            _timeSlots.value = emptyList()
+            selectedTime.value = null
+            return
+        }
 
         viewModelScope.launch {
             val result = reservationRepository.getAvailableTimes(
@@ -155,7 +162,9 @@ class ReservationViewModel @Inject constructor(
             )
 
             result.onSuccess { times ->
-                _timeSlots.value = times.map { time ->
+                val filteredTimes = filterTimesByWorkingHours(times, date)
+
+                _timeSlots.value = filteredTimes.map { time ->
                     TimeSlotModel(
                         time = LocalTime.parse(time)
                     )
@@ -168,4 +177,25 @@ class ReservationViewModel @Inject constructor(
             }
         }
     }
+
+    private fun filterTimesByWorkingHours(times: List<String>, date: LocalDate): List<String> {
+        val hours = getWorkingHoursForDate(date)
+
+        if (hours.isClosed) {
+            return emptyList()
+        }
+
+        val openTime = hours.openTime!!
+        val closeTime = hours.closeTime!!
+
+        return times.filter { time ->
+            val parsedTime = LocalTime.parse(time)
+
+            !parsedTime.isBefore(openTime) && parsedTime.isBefore(closeTime)
+        }
+    }
+
+    private fun getWorkingHoursForDate(date: LocalDate) = restaurant.value!!
+        .workingHours
+        .first { it.dayOfWeek == date.dayOfWeek }
 }

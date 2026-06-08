@@ -8,5 +8,6 @@ data class RestaurantResponse(
     val description: String,
     val rating: Double,
     val phone: String?,
-    val imageUrl: String
+    val imageUrl: String,
+    val workingHours: List<RestaurantHoursResponse>
 )

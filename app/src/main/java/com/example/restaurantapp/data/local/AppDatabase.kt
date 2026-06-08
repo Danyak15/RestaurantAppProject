@@ -12,9 +12,9 @@ import com.example.restaurantapp.data.local.entity.CategoryEntity
 import com.example.restaurantapp.data.local.entity.DishEntity
 import com.example.restaurantapp.data.local.entity.FavoriteDishEntity
 import com.example.restaurantapp.data.local.entity.FavoriteSyncEntity
+import com.example.restaurantapp.data.local.entity.RestaurantHoursEntity
 import com.example.restaurantapp.data.local.entity.RestaurantEntity
 import com.example.restaurantapp.data.local.entity.UserEntity
-
 
 @Database(
     entities = [
@@ -23,7 +23,8 @@ import com.example.restaurantapp.data.local.entity.UserEntity
         CategoryEntity::class,
         DishEntity::class,
         FavoriteDishEntity::class,
-        FavoriteSyncEntity::class
+        FavoriteSyncEntity::class,
+        RestaurantHoursEntity::class
     ],
     version = 1,
     exportSchema = false

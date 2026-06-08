@@ -4,6 +4,7 @@ import com.example.restaurantapp.data.local.dao.CategoryDao
 import com.example.restaurantapp.data.local.dao.DishDao
 import com.example.restaurantapp.data.local.dao.RestaurantDao
 import com.example.restaurantapp.data.local.mapper.toEntity
+import com.example.restaurantapp.data.local.mapper.toHourEntities
 import com.example.restaurantapp.data.remote.api.SyncApi
 import com.example.restaurantapp.data.utils.NetworkHelper
 import com.example.restaurantapp.domain.repository.SyncRepository
@@ -24,7 +25,10 @@ class SyncRepositoryImpl @Inject constructor(
             val body = response.body()
 
             if (response.isSuccessful && body != null) {
-                restaurantDao.insertAll(body.restaurants.map { it.toEntity() })
+                restaurantDao.insertRestaurantsWithHours(
+                    restaurants = body.restaurants.map { it.toEntity() },
+                    hours = body.restaurants.flatMap { it.toHourEntities() }
+                )
                 categoryDao.insertAll(body.categories.map { it.toEntity() })
                 dishDao.insertAll(body.dishes.map { it.toEntity() })
                 Result.success(Unit)

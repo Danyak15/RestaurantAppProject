@@ -1,5 +1,6 @@
 package com.example.restaurantapp.data.repository
 
+import com.example.restaurantapp.data.local.auth.SessionManager
 import com.example.restaurantapp.data.local.mapper.toDomain
 import com.example.restaurantapp.data.remote.api.ReservationApi
 import com.example.restaurantapp.data.remote.dto.request.ReservationRequest
@@ -10,7 +11,8 @@ import javax.inject.Inject
 
 class ReservationRepositoryImpl @Inject constructor(
     private val reservationApi: ReservationApi,
-    private val networkHelper: NetworkHelper
+    private val networkHelper: NetworkHelper,
+    private val sessionManager: SessionManager
 ) : ReservationRepository {
     override suspend fun getMyReservations(): Result<List<Reservation>> {
         return try {
@@ -86,6 +88,8 @@ class ReservationRepositoryImpl @Inject constructor(
 
             if (response.isSuccessful && response.body() != null) {
                 Result.success(response.body()!!.map { it.time })
+            } else if (!sessionManager.isAuthorized()) {
+                Result.failure(Exception("Необходимо авторизоваться"))
             } else {
                 Result.failure(Exception("Ошибка при загруке доступного времени: ${response.code()}"))
             }
