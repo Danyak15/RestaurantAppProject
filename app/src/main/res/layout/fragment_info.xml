@@ -16,8 +16,8 @@
         <ImageView
             android:id="@+id/image_view_restaurant"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:src="@android:drawable/ic_menu_mapmode"
+            android:layout_height="160dp"
+            app:imageUrl="@{restaurant.imageUrl}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

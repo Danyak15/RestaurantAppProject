@@ -13,7 +13,7 @@ interface RestaurantDao {
     fun getRestaurants(): Flow<List<RestaurantEntity>>
 
     @Query("SELECT * FROM restaurants WHERE id = :id")
-    suspend fun getRestaurantById(id: Int): RestaurantEntity?
+    suspend fun getRestaurantById(id: Long): RestaurantEntity?
 
     @Query("SELECT COUNT(*) FROM restaurants")
     suspend fun getCount(): Int

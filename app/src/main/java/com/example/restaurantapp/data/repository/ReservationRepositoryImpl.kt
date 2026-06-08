@@ -29,7 +29,7 @@ class ReservationRepositoryImpl @Inject constructor(
     }
 
     override suspend fun createReservation(
-        restaurantId: Int,
+        restaurantId: Long,
         dateTime: String,
         guests: Int
     ): Result<Reservation> {
@@ -71,7 +71,7 @@ class ReservationRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getAvailableTimes(
-        restaurantId: Int,
+        restaurantId: Long,
         date: String,
         guests: Int
     ): Result<List<String>> {

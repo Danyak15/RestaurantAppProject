@@ -18,7 +18,7 @@ class InfoViewModel @Inject constructor(
     private val _restaurant = MutableStateFlow<Restaurant?>(null)
     val restaurant: StateFlow<Restaurant?> = _restaurant.asStateFlow()
 
-    fun loadRestaurant(restaurantId: Int) {
+    fun loadRestaurant(restaurantId: Long) {
         viewModelScope.launch {
             _restaurant.value = repository.getRestaurantById(restaurantId)
         }

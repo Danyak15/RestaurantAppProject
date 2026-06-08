@@ -23,7 +23,7 @@ class MenuCategoriesViewModel @Inject constructor(
     private val categoriesRepository: CategoriesRepository,
     private val dishesRepository: DishesRepository
 ) : ViewModel() {
-    private val _selectedRestaurantId = MutableStateFlow<Int?>(null)
+    private val _selectedRestaurantId = MutableStateFlow<Long?>(null)
 
     private val _searchText = MutableStateFlow("")
     val searchText: StateFlow<String> = _searchText.asStateFlow()
@@ -69,7 +69,7 @@ class MenuCategoriesViewModel @Inject constructor(
             initialValue = emptyList()
         )
 
-    fun loadCategories(restaurantId: Int) {
+    fun loadCategories(restaurantId: Long) {
         _selectedRestaurantId.value = restaurantId
     }
 

@@ -18,8 +18,8 @@
 
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="220dp"
-                android:src="@android:drawable/ic_menu_manage"
+                android:layout_height="160dp"
+                app:imageUrl="@{dish.imageUrl}"
                 android:scaleType="centerCrop" />
 
             <LinearLayout

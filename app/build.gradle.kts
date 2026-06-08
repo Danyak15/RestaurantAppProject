@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("kotlin-kapt")
     alias(libs.plugins.androidx.navigation.safeargs)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
@@ -70,6 +71,8 @@ dependencies {
     implementation(libs.logging.interceptor)
     implementation(libs.androidx.cardview)
     implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.swiperefreshlayout)
+    implementation(libs.coil)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -80,7 +83,6 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.work)
     ksp(libs.hilt.compiler)
-    implementation(libs.androidx.hilt.work)
     ksp(libs.androidx.hilt.compiler)
 
 }

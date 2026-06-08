@@ -5,6 +5,7 @@ import com.example.restaurantapp.data.remote.api.AccountApi
 import com.example.restaurantapp.data.remote.api.FavoriteApi
 import com.example.restaurantapp.data.remote.api.NewsApi
 import com.example.restaurantapp.data.remote.api.ReservationApi
+import com.example.restaurantapp.data.remote.api.SyncApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,8 +20,8 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    private const val BASE_URL = "http://10.0.2.2:8080/"
-//        private const val BASE_URL = "http://192.168.0.100:8080/"
+    private const val BASE_URL = "http://10.0.2.2:8080"
+//        private const val BASE_URL = "http://192.168.0.101:8080"
 
     @Provides
     @Singleton
@@ -73,6 +74,12 @@ object NetworkModule {
     fun provideAccountApi(
         retrofit: Retrofit
     ): AccountApi = retrofit.create(AccountApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideSyncApi(
+        retrofit: Retrofit
+    ): SyncApi = retrofit.create(SyncApi::class.java)
 
     @Provides
     @Singleton

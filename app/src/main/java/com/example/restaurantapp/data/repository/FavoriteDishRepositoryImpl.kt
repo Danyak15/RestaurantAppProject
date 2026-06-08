@@ -28,7 +28,7 @@ class FavoriteDishRepositoryImpl @Inject constructor(
     override fun isAuthorized(): Boolean = sessionManager.isAuthorized()
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun observeIsFavorite(dishId: Int): Flow<Boolean> {
+    override fun observeIsFavorite(dishId: Long): Flow<Boolean> {
         if (!sessionManager.isAuthorized()) {
             return flowOf(false)
         }
@@ -42,7 +42,7 @@ class FavoriteDishRepositoryImpl @Inject constructor(
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun observeFavoriteDishIds(): Flow<List<Int>> {
+    override fun observeFavoriteDishIds(): Flow<List<Long>> {
         if (!sessionManager.isAuthorized()) {
             return flowOf(emptyList())
         }
@@ -56,7 +56,7 @@ class FavoriteDishRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun addToFavorites(dishId: Int): Result<Unit> {
+    override suspend fun addToFavorites(dishId: Long): Result<Unit> {
         return try {
             val userId = getCurrentUserId()
 
@@ -87,7 +87,7 @@ class FavoriteDishRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun removeFromFavorites(dishId: Int): Result<Unit> {
+    override suspend fun removeFromFavorites(dishId: Long): Result<Unit> {
         return try {
             val userId = getCurrentUserId()
 
@@ -113,7 +113,7 @@ class FavoriteDishRepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun trySyncItem(userId: Long, dishId: Int, action: String): Result<Unit> {
+    private suspend fun trySyncItem(userId: Long, dishId: Long, action: String): Result<Unit> {
         return try {
             networkHelper.checkInternetConnection()
 

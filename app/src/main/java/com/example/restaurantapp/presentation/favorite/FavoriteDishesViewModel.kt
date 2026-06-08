@@ -30,7 +30,7 @@ class FavoriteDishesViewModel @Inject constructor(
         syncFavorites()
     }
 
-    private val selectedRestaurantId = MutableStateFlow<Int?>(null)
+    private val selectedRestaurantId = MutableStateFlow<Long?>(null)
 
     private val restaurants: StateFlow<List<Restaurant>> =
         restaurantsRepository.getRestaurants()
@@ -93,7 +93,7 @@ class FavoriteDishesViewModel @Inject constructor(
         }
     }
 
-    fun selectRestaurant(restaurantId: Int?) {
+    fun selectRestaurant(restaurantId: Long?) {
         selectedRestaurantId.value = restaurantId
     }
 }

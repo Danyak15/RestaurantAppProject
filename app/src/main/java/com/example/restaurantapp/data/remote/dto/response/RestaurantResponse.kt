@@ -1,6 +1,6 @@
-package com.example.restaurantapp.domain.model
+package com.example.restaurantapp.data.remote.dto.response
 
-data class Restaurant(
+data class RestaurantResponse(
     val id: Long,
     val name: String,
     val cuisine: String,

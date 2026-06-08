@@ -61,7 +61,7 @@ class ReservationViewModel @Inject constructor(
         generateDateSlots()
     }
 
-    fun loadRestaurant(id: Int) {
+    fun loadRestaurant(id: Long) {
         viewModelScope.launch {
             _restaurant.value = restaurantRepository.getRestaurantById(id)
 

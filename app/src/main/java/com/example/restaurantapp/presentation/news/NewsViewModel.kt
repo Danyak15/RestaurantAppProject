@@ -24,7 +24,7 @@ class NewsViewModel @Inject constructor(
     private val restaurantsRepository: RestaurantsRepository,
     private val newsRepository: NewsRepository
 ) : ViewModel() {
-    private val selectedRestaurantId = MutableStateFlow<Int?>(null)
+    private val selectedRestaurantId = MutableStateFlow<Long?>(null)
 
     val restaurants: StateFlow<List<Restaurant>> =
         restaurantsRepository.getRestaurants().stateIn(
@@ -43,7 +43,7 @@ class NewsViewModel @Inject constructor(
         observeSelectedRestaurant()
     }
 
-    fun selectRestaurant(restaurantId: Int?) {
+    fun selectRestaurant(restaurantId: Long?) {
         selectedRestaurantId.value = restaurantId
     }
 
@@ -55,7 +55,7 @@ class NewsViewModel @Inject constructor(
         }
     }
 
-    private suspend fun loadNews(restaurantId: Int?) {
+    private suspend fun loadNews(restaurantId: Long?) {
         newsRepository.getNews(restaurantId)
             .onSuccess { news ->
                 _news.value = news

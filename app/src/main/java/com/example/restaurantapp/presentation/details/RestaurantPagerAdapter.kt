@@ -9,23 +9,23 @@ import com.example.restaurantapp.presentation.menu.MenuCategoriesFragment
 
 class RestaurantPagerAdapter(
     fragment: Fragment,
-    private val restaurantId: Int
+    private val restaurantId: Long
 ) : FragmentStateAdapter(fragment) {
     override fun createFragment(position: Int): Fragment {
         return when(position) {
             0 -> InfoFragment().apply {
                 arguments = Bundle().apply {
-                    putInt("restaurantId", restaurantId)
+                    putLong("restaurantId", restaurantId)
                 }
             }
             1 -> MenuCategoriesFragment().apply {
                 arguments = Bundle().apply {
-                    putInt("restaurantId", restaurantId)
+                    putLong("restaurantId", restaurantId)
                 }
             }
             2 -> ReservationFragment().apply {
                 arguments = Bundle().apply {
-                    putInt("restaurantId", restaurantId)
+                    putLong("restaurantId", restaurantId)
                 }
             }
             else -> InfoFragment()

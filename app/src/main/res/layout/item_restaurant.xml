@@ -28,7 +28,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="160dp"
                 android:scaleType="centerCrop"
-                android:src="@android:drawable/ic_menu_manage"
+                app:imageUrl="@{restaurant.imageUrl}"
                 android:contentDescription="Фото ресторана"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -52,7 +52,7 @@
                 android:background="#CCF5A623"
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="4dp"
-                android:text="@{`★ ` + Double.toString(restaurant.rating)}"
+                android:text='@{"★ " + restaurant.rating}'
                 android:textColor="@color/text_primary"
                 android:textSize="13sp"
                 android:textStyle="bold"

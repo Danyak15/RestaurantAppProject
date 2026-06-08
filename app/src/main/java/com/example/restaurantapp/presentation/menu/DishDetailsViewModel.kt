@@ -22,7 +22,7 @@ class DishDetailsViewModel @Inject constructor(
     private val dishesRepository: DishesRepository,
     private val favoriteDishRepository: FavoriteDishRepository
 ) : ViewModel() {
-    private val _selectedDishId = MutableStateFlow<Int?>(null)
+    private val _selectedDishId = MutableStateFlow<Long?>(null)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val dish: StateFlow<Dish?> = _selectedDishId
@@ -50,7 +50,7 @@ class DishDetailsViewModel @Inject constructor(
 
     val isFavoriteVisible: Boolean = favoriteDishRepository.isAuthorized()
 
-    fun loadDishDetails(dishId: Int) {
+    fun loadDishDetails(dishId: Long) {
         _selectedDishId.value = dishId
     }
 

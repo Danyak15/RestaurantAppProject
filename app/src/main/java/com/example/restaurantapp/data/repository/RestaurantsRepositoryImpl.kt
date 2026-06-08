@@ -17,7 +17,7 @@ class RestaurantsRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getRestaurantById(id: Int): Restaurant? {
+    override suspend fun getRestaurantById(id: Long): Restaurant? {
         return restaurantDao.getRestaurantById(id)?.toDomain()
     }
 }

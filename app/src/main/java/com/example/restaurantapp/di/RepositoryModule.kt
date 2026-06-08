@@ -7,6 +7,7 @@ import com.example.restaurantapp.data.repository.FavoriteDishRepositoryImpl
 import com.example.restaurantapp.data.repository.NewsRepositoryImpl
 import com.example.restaurantapp.data.repository.ReservationRepositoryImpl
 import com.example.restaurantapp.data.repository.RestaurantsRepositoryImpl
+import com.example.restaurantapp.data.repository.SyncRepositoryImpl
 import com.example.restaurantapp.domain.repository.AccountRepository
 import com.example.restaurantapp.domain.repository.CategoriesRepository
 import com.example.restaurantapp.domain.repository.DishesRepository
@@ -14,6 +15,7 @@ import com.example.restaurantapp.domain.repository.FavoriteDishRepository
 import com.example.restaurantapp.domain.repository.NewsRepository
 import com.example.restaurantapp.domain.repository.ReservationRepository
 import com.example.restaurantapp.domain.repository.RestaurantsRepository
+import com.example.restaurantapp.domain.repository.SyncRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -46,6 +48,12 @@ abstract class RepositoryModule {
     abstract fun bindDishesRepository(
         impl: DishesRepositoryImpl
     ): DishesRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindSyncRepository(
+        impl: SyncRepositoryImpl
+    ): SyncRepository
 
     @Binds
     @Singleton

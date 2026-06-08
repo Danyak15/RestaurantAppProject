@@ -11,13 +11,13 @@ import javax.inject.Inject
 class CategoriesRepositoryImpl @Inject constructor(
     private val categoryDao: CategoryDao
 ) : CategoriesRepository {
-    override fun getCategoriesByRestaurantId(restaurantId: Int): Flow<List<Category>> {
+    override fun getCategoriesByRestaurantId(restaurantId: Long): Flow<List<Category>> {
         return categoryDao.getCategoriesByRestaurantId(restaurantId).map { list ->
             list.map { it.toDomain() }
         }
     }
 
-    override suspend fun getCategoryById(id: Int): Category? {
+    override suspend fun getCategoryById(id: Long): Category? {
         return categoryDao.getCategoryById(id)?.toDomain()
     }
 }

@@ -23,7 +23,7 @@
                 android:id="@+id/iv_dish_image"
                 android:layout_width="0dp"
                 android:layout_height="120dp"
-                android:src="@android:drawable/ic_menu_camera"
+                app:imageUrl="@{favoriteDish.imageUrl}"
                 android:background="@color/bg_elevated"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

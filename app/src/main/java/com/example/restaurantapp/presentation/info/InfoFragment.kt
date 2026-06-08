@@ -29,7 +29,7 @@ class InfoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val restaurantId = arguments?.getInt("restaurantId") ?: return
+        val restaurantId = arguments?.getLong("restaurantId") ?: return
 
         observeViewModel()
         viewModel.loadRestaurant(restaurantId)

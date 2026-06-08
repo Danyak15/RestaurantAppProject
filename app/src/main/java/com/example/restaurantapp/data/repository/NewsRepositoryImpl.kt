@@ -11,7 +11,7 @@ class NewsRepositoryImpl @Inject constructor(
     private val newsApi: NewsApi,
     private val networkHelper: NetworkHelper
 ) : NewsRepository {
-    override suspend fun getNews(restaurantId: Int?): Result<List<News>> {
+    override suspend fun getNews(restaurantId: Long?): Result<List<News>> {
         return try {
             networkHelper.checkInternetConnection()
 

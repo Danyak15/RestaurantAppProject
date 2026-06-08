@@ -6,7 +6,7 @@ interface ReservationRepository {
     suspend fun getMyReservations(): Result<List<Reservation>>
 
     suspend fun createReservation(
-        restaurantId: Int,
+        restaurantId: Long,
         dateTime: String,
         guests: Int
     ): Result<Reservation>
@@ -14,7 +14,7 @@ interface ReservationRepository {
     suspend fun cancelReservation(id: Long): Result<Reservation>
 
     suspend fun getAvailableTimes(
-        restaurantId: Int,
+        restaurantId: Long,
         date: String,
         guests: Int
     ): Result<List<String>>

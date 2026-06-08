@@ -14,19 +14,19 @@ interface FavoriteDishDao {
     suspend fun addToFavorites(favoriteDish: FavoriteDishEntity)
 
     @Query("DELETE FROM favorite_dishes WHERE userId = :userId AND dishId = :dishId")
-    suspend fun removeFromFavorites(userId: Long, dishId: Int)
+    suspend fun removeFromFavorites(userId: Long, dishId: Long)
 
     @Query("SELECT EXISTS(SELECT 1 FROM favorite_dishes WHERE userId = :userId AND dishId = :dishId)")
-    fun observeIsFavorite(userId: Long, dishId: Int): Flow<Boolean>
+    fun observeIsFavorite(userId: Long, dishId: Long): Flow<Boolean>
 
     @Query("SELECT dishId FROM favorite_dishes WHERE userId = :userId")
-    fun observeFavoriteDishIds(userId: Long): Flow<List<Int>>
+    fun observeFavoriteDishIds(userId: Long): Flow<List<Long>>
 
     @Query("DELETE FROM favorite_dishes WHERE userId = :userId")
     suspend fun clearFavorites(userId: Long)
 
     @Transaction
-    suspend fun updateFavoriteDishes(userId: Long, favoriteIds: List<Int>) {
+    suspend fun updateFavoriteDishes(userId: Long, favoriteIds: List<Long>) {
         clearFavorites(userId)
 
         favoriteIds.forEach { id ->

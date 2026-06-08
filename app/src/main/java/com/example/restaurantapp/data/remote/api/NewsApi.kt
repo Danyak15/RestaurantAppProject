@@ -6,8 +6,8 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface NewsApi {
-    @GET("/news")
+    @GET("/api/news")
     suspend fun getNews(
-        @Query("restaurantId") restaurantId: Int? = null
+        @Query("restaurantId") restaurantId: Long? = null
     ): Response<List<NewsResponse>>
 }

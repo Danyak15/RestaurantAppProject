@@ -8,6 +8,6 @@ import androidx.room.Entity
 )
 data class FavoriteSyncEntity(
     val userId: Long,
-    val dishId: Int,
+    val dishId: Long,
     val action: String
 )

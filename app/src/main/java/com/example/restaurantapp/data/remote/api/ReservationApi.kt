@@ -12,18 +12,18 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface ReservationApi {
-    @GET("reservations/me")
+    @GET("/api/reservations/me")
     suspend fun getMyReservations(): Response<List<ReservationResponse>>
 
-    @POST("reservations")
+    @POST("/api/reservations")
     suspend fun createReservation(@Body request: ReservationRequest): Response<ReservationResponse>
 
-    @DELETE("reservations/{id}")
+    @DELETE("/api/reservations/{id}")
     suspend fun cancelReservation(@Path("id") id: Long): Response<ReservationResponse>
 
-    @GET("reservations/available-times")
+    @GET("/api/reservations/available-times")
     suspend fun getAvailableTimes(
-        @Query("restaurantId") restaurantId: Int,
+        @Query("restaurantId") restaurantId: Long,
         @Query("date") date: String,
         @Query("guests") guests: Int
     ): Response<List<TimeSlotResponse>>

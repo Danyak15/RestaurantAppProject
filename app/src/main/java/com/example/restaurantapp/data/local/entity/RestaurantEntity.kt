@@ -5,10 +5,12 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "restaurants")
 data class RestaurantEntity(
-    @PrimaryKey val id: Int,
+    @PrimaryKey val id: Long,
     val name: String,
     val cuisine: String,
-    val rating: Double,
     val address: String,
-    val description: String
+    val description: String,
+    val rating: Double,
+    val phone: String?,
+    val imageUrl: String
 )

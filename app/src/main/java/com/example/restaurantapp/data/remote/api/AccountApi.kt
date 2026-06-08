@@ -12,15 +12,15 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 
 interface AccountApi {
-    @POST("auth/register")
+    @POST("/api/auth/register")
     suspend fun register(@Body request: RegisterRequest): Response<Unit>
 
-    @POST("auth/login")
+    @POST("/api/auth/login")
     suspend fun login(@Body request: LoginRequest): Response<LoginResponse>
 
-    @GET("users/me")
+    @GET("/api/users/me")
     suspend fun getMe(): Response<UserResponse>
 
-    @PUT("users/me")
+    @PUT("/api/users/me")
     suspend fun updateMe(@Body request: UpdateUserRequest): Response<UserResponse>
 }

@@ -18,7 +18,7 @@ import javax.inject.Inject
 class DishesViewModel @Inject constructor(
     private val repository: DishesRepository
 ) : ViewModel() {
-    private val _selectedCategoryId = MutableStateFlow<Int?>(null)
+    private val _selectedCategoryId = MutableStateFlow<Long?>(null)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val dishes: StateFlow<List<Dish>> = _selectedCategoryId
@@ -32,7 +32,7 @@ class DishesViewModel @Inject constructor(
             initialValue = emptyList()
         )
 
-    fun loadDishes(categoryId: Int) {
+    fun loadDishes(categoryId: Long) {
         _selectedCategoryId.value = categoryId
     }
 }

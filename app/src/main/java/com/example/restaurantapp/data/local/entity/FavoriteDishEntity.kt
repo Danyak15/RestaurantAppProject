@@ -8,5 +8,5 @@ import androidx.room.Entity
 )
 data class FavoriteDishEntity(
     val userId: Long,
-    val dishId: Int
+    val dishId: Long
 )

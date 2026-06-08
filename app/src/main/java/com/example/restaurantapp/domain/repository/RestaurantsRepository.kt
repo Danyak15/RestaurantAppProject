@@ -5,5 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface RestaurantsRepository {
     fun getRestaurants(): Flow<List<Restaurant>>
-    suspend fun getRestaurantById(id: Int): Restaurant?
+    suspend fun getRestaurantById(id: Long): Restaurant?
 }

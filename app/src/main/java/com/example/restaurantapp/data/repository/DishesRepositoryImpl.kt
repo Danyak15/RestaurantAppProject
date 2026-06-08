@@ -11,25 +11,25 @@ import javax.inject.Inject
 class DishesRepositoryImpl @Inject constructor(
     private val dishDao: DishDao
 ) : DishesRepository {
-    override fun getDishesByCategoryId(categoryId: Int): Flow<List<Dish>> {
+    override fun getDishesByCategoryId(categoryId: Long): Flow<List<Dish>> {
         return dishDao.getDishesByCategoryId(categoryId).map { list ->
             list.map { it.toDomain() }
         }
     }
 
-    override fun observeDishesByIds(ids: List<Int>): Flow<List<Dish>> {
+    override fun observeDishesByIds(ids: List<Long>): Flow<List<Dish>> {
         return dishDao.observeDishesByIds(ids).map { list ->
             list.map { it.toDomain() }
         }
     }
 
-    override fun observeDishesByRestaurantId(restaurantId: Int): Flow<List<Dish>> {
+    override fun observeDishesByRestaurantId(restaurantId: Long): Flow<List<Dish>> {
         return dishDao.observeDishesByRestaurantId(restaurantId).map { list ->
             list.map { it.toDomain() }
         }
     }
 
-    override suspend fun getDishById(id: Int): Dish? {
+    override suspend fun getDishById(id: Long): Dish? {
         return dishDao.getDishById(id)?.toDomain()
     }
 }
