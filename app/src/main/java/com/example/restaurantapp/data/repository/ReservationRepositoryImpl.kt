@@ -5,6 +5,7 @@ import com.example.restaurantapp.data.local.mapper.toDomain
 import com.example.restaurantapp.data.remote.api.ReservationApi
 import com.example.restaurantapp.data.remote.dto.request.ReservationRequest
 import com.example.restaurantapp.data.utils.NetworkHelper
+import com.example.restaurantapp.data.worker.ReservationReminderScheduler
 import com.example.restaurantapp.domain.model.Reservation
 import com.example.restaurantapp.domain.repository.ReservationRepository
 import javax.inject.Inject
@@ -12,7 +13,8 @@ import javax.inject.Inject
 class ReservationRepositoryImpl @Inject constructor(
     private val reservationApi: ReservationApi,
     private val networkHelper: NetworkHelper,
-    private val sessionManager: SessionManager
+    private val sessionManager: SessionManager,
+    private val reminderScheduler: ReservationReminderScheduler
 ) : ReservationRepository {
     override suspend fun getMyReservations(): Result<List<Reservation>> {
         return try {
@@ -47,7 +49,15 @@ class ReservationRepositoryImpl @Inject constructor(
             )
 
             if (response.isSuccessful && response.body() != null) {
-                Result.success(response.body()!!.toDomain())
+                val reservation = response.body()!!.toDomain()
+
+                reminderScheduler.schedule(
+                    reservationId = reservation.id,
+                    dateTimeString = reservation.dateTime,
+                    guests = reservation.guests
+                )
+
+                Result.success(reservation)
             } else {
                 Result.failure(Exception("Ошибка при бронировании столика"))
             }
@@ -63,7 +73,10 @@ class ReservationRepositoryImpl @Inject constructor(
             val response = reservationApi.cancelReservation(id)
 
             if (response.isSuccessful && response.body() != null) {
-                Result.success(response.body()!!.toDomain())
+                val reservation = response.body()!!.toDomain()
+                reminderScheduler.cancel(id)
+
+                Result.success(reservation)
             } else {
                 Result.failure(Exception("Ошибка при отмене брони"))
             }
